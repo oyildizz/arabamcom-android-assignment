@@ -80,7 +80,7 @@ class MainActivity : AppCompatActivity()  {
 //                    println("INSIDE RESPONSEEEEE")
 ////                    val responseBody= response.body()!!
 ////                    data = responseBody.products
-//                    println("UPS OZİ BASTI" + response.toString())
+//                    println("ups" + response.toString())
 ////                    var adapter= PropertiesAdapter(data)
 ////                    binding.recyclerview.adapter=adapter
 //
