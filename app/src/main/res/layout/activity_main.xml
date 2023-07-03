@@ -19,14 +19,13 @@
         app:layout_constraintStart_toEndOf="@+id/textInputEditText"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/textInputLayout"
-        android:layout_width="231dp"
-        android:layout_height="40dp"
-        tools:layout_editor_absoluteX="28dp"
-        tools:layout_editor_absoluteY="16dp">
+<!--    <com.google.android.material.textfield.TextInputLayout-->
+<!--        android:id="@+id/textInputLayout"-->
+<!--        android:layout_width="231dp"-->
+<!--        android:layout_height="40dp"-->
+<!--        tools:layout_editor_absoluteX="28dp"-->
+<!--        tools:layout_editor_absoluteY="16dp" />-->
 
-    </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/textInputEditText"
@@ -48,6 +47,25 @@
         app:layout_constraintHorizontal_bias="0.482"
         app:layout_constraintStart_toStartOf="@+id/textInputEditText"
         app:layout_constraintTop_toBottomOf="@+id/textInputEditText" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerview"
+        android:layout_width="409dp"
+        android:layout_height="504dp"
+        android:layout_marginTop="32dp"
+        android:padding="10.0dp"
+        android:text="TextView"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
+
+
+<!--            tools:layout_editor_absoluteX="163dp"-->
+<!--        tools:layout_editor_absoluteY="183dp"-->
 
 
 
