@@ -3,14 +3,9 @@ package com.example.kotlin
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
-import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.kotlin.databinding.ActivityMainBinding
 import kotlinx.coroutines.*
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 class MainActivity : AppCompatActivity()  {
     private lateinit var binding: ActivityMainBinding
@@ -50,6 +45,8 @@ class MainActivity : AppCompatActivity()  {
 //        }
 
 
+
+
     private suspend fun getAllProducts() {
         println("INSIIDEEEEE")
         val carApi = ServiceBuilder.buildService().create(ServiceInterface::class.java)
@@ -61,7 +58,7 @@ class MainActivity : AppCompatActivity()  {
             }
 
             if (response.isSuccessful) {
-                val adapter = PropertiesAdapter(response.body()!!)
+                val adapter = PropertiesAdapter(response.body()!!,this)
                 binding.recyclerview.adapter = adapter
                 println("successs" + response.body()!!.first().photo.toString())
             } else {
