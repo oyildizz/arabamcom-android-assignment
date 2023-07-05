@@ -21,6 +21,8 @@ class PropertiesAdapter : RecyclerView.Adapter<PropertiesAdapter.ViewHolder>
              this.context=context
          }
 
+
+
          override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view= LayoutInflater.from(parent.context).inflate(R.layout.product_card,parent,false)
         return ViewHolder(view)
@@ -35,6 +37,7 @@ class PropertiesAdapter : RecyclerView.Adapter<PropertiesAdapter.ViewHolder>
             var intent = Intent(context,DetailActivity::class.java)
             intent.putExtra("id",products.id.toString())
             intent.putExtra("title",products.title.toString())
+            intent.putExtra("location",products.location.toString())
             context!!.startActivity(intent)
         }
     }

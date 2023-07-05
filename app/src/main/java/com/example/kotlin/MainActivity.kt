@@ -21,34 +21,11 @@ class MainActivity : AppCompatActivity()  {
         val coroutineScope = CoroutineScope(Dispatchers.Main)
         coroutineScope.launch {
             getAllProducts()
+
         }
-
-
-        binding.button.setOnClickListener{
-            val newIntent= Intent(this@MainActivity, DetailActivity::class.java)
-
-            startActivity(newIntent)
-        }
-
     }
 
-//            binding.button.setOnClickListener{
-//            if (binding.textInputEditText.text!!.isNotEmpty()){
-//                var carName= binding.textInputEditText.text.toString()
-//                when(carName){
-//                    "hh"->binding.textView.text="OPEL ASTRA"
-//                }
-//            }
-//            else{
-//                binding.textView.text ="Herhangi bir araba modeli giriniz."
-//            }
-//        }
-
-
-
-
     private suspend fun getAllProducts() {
-        println("INSIIDEEEEE")
         val carApi = ServiceBuilder.buildService().create(ServiceInterface::class.java)
 
         try {
@@ -60,7 +37,7 @@ class MainActivity : AppCompatActivity()  {
             if (response.isSuccessful) {
                 val adapter = PropertiesAdapter(response.body()!!,this)
                 binding.recyclerview.adapter = adapter
-                println("successs" + response.body()!!.first().photo.toString())
+//                println("successs" + response.body()!!.first().photo.toString())
             } else {
                 println("errorr" + response.message())
             }
@@ -68,6 +45,7 @@ class MainActivity : AppCompatActivity()  {
             println("errorr" + e.message)
         }
         }
+
 
 
 //        retrofit.getAllProducts().enqueue(object : Callback<ApiResponse>{
