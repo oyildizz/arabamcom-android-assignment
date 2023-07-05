@@ -70,7 +70,7 @@ class DetailActivity : AppCompatActivity() {
           binding.tvModel.text=responseBody.modelName
           binding.tvPrice.text=responseBody.priceFormatted
           binding.tvDate.text=responseBody.dateFormatted
-//          binding.tvExp.text=responseBody.text
+          binding.tvExp.text=responseBody.text
           binding.tvUserPhone.text=responseBody.userInfo.phoneFormatted
       }
 
