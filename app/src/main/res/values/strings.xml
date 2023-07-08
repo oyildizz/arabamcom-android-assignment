@@ -2,5 +2,10 @@
     <string name="app_name">ArabaPiyasası</string>
     <string name="search">Ara</string>
     <string name="find">Bul</string>
+    <string name="item1">Item1</string>
+    <string name="ilan_bilgileri">İLAN BİLGİLERİ</string>
+    <string name="aciklama">AÇIKLAMA</string>
+    <string name="kullanici_bilgileri">KULLANICI BİLGİLERİ</string>
+
 
 </resources>
