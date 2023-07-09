@@ -44,7 +44,7 @@ class DetailActivity : AppCompatActivity() {
         val coroutineScope = CoroutineScope(Dispatchers.Main)
         coroutineScope.launch {
             getView(id)
-
+            onClick(binding.ilanBilgileriButton)
         }
 
 //        val response = ServiceBuilder.buildService().create(ServiceDetailInterface::class.java).getView(id).execute()
