@@ -44,7 +44,7 @@ class MainActivity : AppCompatActivity()  {
         } catch (e: Exception) {
             println("errorr" + e.message)
         }
-        }
+    }
 
 
 
@@ -72,6 +72,4 @@ class MainActivity : AppCompatActivity()  {
 //            }
 
 //        })
-    }
-
-
+}

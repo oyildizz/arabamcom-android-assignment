@@ -1,23 +1,16 @@
 package com.example.kotlin
 
-import android.annotation.SuppressLint
 import android.content.Context
-import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
-import android.os.Looper
 import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import androidx.appcompat.app.AppCompatActivity
+import androidx.cardview.widget.CardView
+import androidx.core.view.children
 import androidx.viewpager.widget.ViewPager
 import com.example.kotlin.databinding.ActivityDetailBinding
-import com.example.kotlin.databinding.ActivityMainBinding
 import com.squareup.picasso.Picasso
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -25,7 +18,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 
-class DetailActivity : AppCompatActivity(), View.OnClickListener {
+class DetailActivity : AppCompatActivity() {
     private lateinit var binding: ActivityDetailBinding
     private var context: Context? = null
 
@@ -40,7 +33,6 @@ class DetailActivity : AppCompatActivity(), View.OnClickListener {
         binding = ActivityDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.recyclerview.layoutManager = LinearLayoutManager(this)
 
         var bundle: Bundle = intent.extras!!
 
@@ -55,35 +47,51 @@ class DetailActivity : AppCompatActivity(), View.OnClickListener {
 
         }
 
-//        val ilanBilgileriButton: Button = findViewById(R.id.ilan_bilgileri_button)
-//        val aciklamaButton: Button = findViewById(R.id.aciklama_button)
-//        val kullaniciBilgileriButton: Button = findViewById(R.id.kullanici_bilgileri_button)
-//
-//
-//        ilanBilgileriButton.setOnClickListener {
-//
-//            var intent = Intent(context,MainActivity::class.java)
-//            context!!.startActivity(intent)
+//        val response = ServiceBuilder.buildService().create(ServiceDetailInterface::class.java).getView(id).execute()
+//        val responseBody = response.body()
+//        if (responseBody != null) {
+//            setOnClickListeners(responseBody)
 //        }
-//
-//        aciklamaButton.setOnClickListener {
-//
-//        }
-//
-//        kullaniciBilgileriButton.setOnClickListener {
-//
-//        }
+//        onClick(binding.root)
+
+
+        binding.ilanBilgileriButton.setOnClickListener {
+            onClick(binding.ilanBilgileriButton)
+        }
+
+        binding.aciklamaButton.setOnClickListener {
+            onClick(binding.aciklamaButton)
+        }
+
+        binding.kullaniciBilgileriButton.setOnClickListener {
+            onClick(binding.kullaniciBilgileriButton)
+        }
 
     }
 
+//    private fun setOnClickListeners(responseBody: ApiDetailResponse) {
+//        binding.ilanBilgileriButton.setOnClickListener {
+//            onClick(binding.ilanBilgileriButton)
+//        }
+//
+//        binding.aciklamaButton.setOnClickListener {
+//            onClick(binding.aciklamaButton)
+//        }
+//
+//        binding.kullaniciBilgileriButton.setOnClickListener {
+//            onClick(binding.kullaniciBilgileriButton)
+//        }
+//    }
 
-    @SuppressLint("MissingInflatedId")
-    override fun onClick(view: View?) {
-        when (view?.id) {
+    private fun onClick(button: Button) {
+        val cardView = findViewById<CardView>(R.id.cardview)
+
+        when (button.id) {
             R.id.ilan_bilgileri_button -> {
                 // İlan bilgileri butonuna tıklanıldığında yapılacak işlemler
                 val inflater = LayoutInflater.from(this)
                 val ilanBilgileriView = inflater.inflate(R.layout.ilan_bilgileri, null)
+
 
                 // İlgili TextView bileşenlerine metinleri atama
                 val tvDate = ilanBilgileriView.findViewById<TextView>(R.id.tvDate)
@@ -91,15 +99,16 @@ class DetailActivity : AppCompatActivity(), View.OnClickListener {
                 val tvPrice = ilanBilgileriView.findViewById<TextView>(R.id.tvPrice)
 
 
-                tvModel.text = "MODEL"
-                tvPrice.text = "10.000 TL"
-                tvDate.text = "20 HAZİRAN"
+                tvModel.text = "responseBody.modelName"
+                tvPrice.text = "responseBody.priceFormatted"
+                tvDate.text = "responseBody.dateFormatted"
 
 
                 // İlgili XML bileşenlerini ConstraintLayout içine ekleme
-                val constraintLayout = findViewById<ConstraintLayout>(R.id.recyclerview)
-                constraintLayout.removeAllViews()
-                constraintLayout.addView(ilanBilgileriView)
+                cardView.removeAllViews()
+                println("SGSGDSFSDFSD ${cardView.children}")
+                cardView.addView(ilanBilgileriView)
+                println("SARKI BİTTİ ${cardView.children.first().id}")
             }
 
             R.id.aciklama_button -> {
@@ -111,12 +120,11 @@ class DetailActivity : AppCompatActivity(), View.OnClickListener {
                 val tvExp = aciklamaView.findViewById<TextView>(R.id.tvExp)
 
 
-                tvExp.text = "Açıklama Başlık"
+                tvExp.text = "responseBody.text.htmlEncode()"
 
                 // İlgili XML bileşenini ConstraintLayout içine ekleme
-                val constraintLayout = findViewById<ConstraintLayout>(R.id.recyclerview)
-                constraintLayout.removeAllViews()
-                constraintLayout.addView(aciklamaView)
+                cardView.removeAllViews()
+                cardView.addView(aciklamaView)
             }
 
             R.id.kullanici_bilgileri_button -> {
@@ -127,35 +135,22 @@ class DetailActivity : AppCompatActivity(), View.OnClickListener {
 
                 // İlgili TextView bileşenlerine metinleri atama
                 val tvId = kullaniciBilgileriView.findViewById<TextView>(R.id.tvId)
-                val tvUserName = kullaniciBilgileriView.findViewById<TextView>(R.id.tvUserName)
-                val tvUserPhone = kullaniciBilgileriView.findViewById<TextView>(R.id.tvUserPhone)
+                val tvUserName =
+                    kullaniciBilgileriView.findViewById<TextView>(R.id.textUserName)
+                val tvUserPhone =
+                    kullaniciBilgileriView.findViewById<TextView>(R.id.tvUserPhone)
 
-                tvId.text = "Kullanıcı Başlık"
-                tvUserName.text = "Kullanıcı Adı"
-                tvUserPhone.text = "Kullanıcı Lokasyon"
+                tvId.text = "responseBody.userInfo.id.toString()"
+                tvUserName.text = "responseBody.userInfo.nameSurname"
+                tvUserPhone.text = "responseBody.userInfo.phoneFormatted"
 
                 // İlgili XML bileşenlerini ConstraintLayout içine ekleme
-                val constraintLayout = findViewById<ConstraintLayout>(R.id.recyclerview)
-                constraintLayout.removeAllViews()
-                constraintLayout.addView(kullaniciBilgileriView)
+                cardView.removeAllViews()
+                cardView.addView(kullaniciBilgileriView)
             }
         }
-    }
 
-//    private fun init(){
-//        viewPager = findViewById (R.id.viewPager)
-//        handler = Handler(Looper.myLooper()!!)
-//        photos = ArrayList()
-//        photos.add (R.drawable.one)
-//
-//        adapter =ImagePagerAdapter(photos,viewPager)
-//        viewPager.adapter=adapter
-//        viewPager.offscreenPageLimit=3
-//        viewPager.clipToPadding=false
-//        viewPager.clipChildren=false
-//        viewPager.getChildAt(0).overScrollMode=RecyclerView.OVER_SCROLL_NEVER
-//
-//    }
+    }
 
     private suspend fun getView(id: Int) {
 
@@ -188,13 +183,12 @@ class DetailActivity : AppCompatActivity(), View.OnClickListener {
         binding.tvTitle.text = responseBody.title
         binding.tvUserName.text = responseBody.userInfo.nameSurname
         binding.tvLocation.text = responseBody.location.cityName
-//        binding.tvModel.text = responseBody.modelName
-//        binding.tvPrice.text = responseBody.priceFormatted
-//        binding.tvDate.text = responseBody.dateFormatted
-//          binding.tvExp.text=responseBody.text
-//          binding.tvUserPhone.text=responseBody.userInfo.phoneFormatted
+//      binding.tvModel.text = responseBody.modelName
+//      binding.tvPrice.text = responseBody.priceFormatted
+//      binding.tvDate.text = responseBody.dateFormatted
+//      binding.tvExp.text=responseBody.text
+//      binding.tvUserPhone.text=responseBody.userInfo.phoneFormatted
     }
 
 
 }
-
