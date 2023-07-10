@@ -105,10 +105,9 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.cardview.widget.CardView
-        android:layout_marginRight="10dp"
-        android:layout_marginLeft="10dp"
+
         android:id="@+id/cardview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="10dp" />
+         />
 </LinearLayout>

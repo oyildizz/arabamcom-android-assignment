@@ -16,7 +16,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-
+import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
+import org.jsoup.safety.Whitelist
 
 class DetailActivity : AppCompatActivity() {
     private lateinit var binding: ActivityDetailBinding
@@ -33,11 +35,10 @@ class DetailActivity : AppCompatActivity() {
         binding = ActivityDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-
         var bundle: Bundle = intent.extras!!
 
         val id: Int = bundle.getString("id")!!.toInt()
-        val title = bundle.getString("location")
+
 
         binding.tvTitle.text = title.toString()
 
@@ -56,35 +57,56 @@ class DetailActivity : AppCompatActivity() {
 
 
         binding.ilanBilgileriButton.setOnClickListener {
-            onClick(binding.ilanBilgileriButton)
+            coroutineScope.launch {
+                onClick(binding.ilanBilgileriButton)
+            }
         }
 
         binding.aciklamaButton.setOnClickListener {
-            onClick(binding.aciklamaButton)
+            coroutineScope.launch {
+                onClick(binding.aciklamaButton)
+            }
         }
 
         binding.kullaniciBilgileriButton.setOnClickListener {
-            onClick(binding.kullaniciBilgileriButton)
+            coroutineScope.launch {
+                onClick(binding.kullaniciBilgileriButton)
+            }
         }
 
     }
 
 //    private fun setOnClickListeners(responseBody: ApiDetailResponse) {
+//        val coroutineScope = CoroutineScope(Dispatchers.Main)
 //        binding.ilanBilgileriButton.setOnClickListener {
-//            onClick(binding.ilanBilgileriButton)
+//            coroutineScope.launch {
+//                onClick(binding.ilanBilgileriButton)
+//            }
 //        }
 //
 //        binding.aciklamaButton.setOnClickListener {
-//            onClick(binding.aciklamaButton)
+//            coroutineScope.launch {
+//                onClick(binding.aciklamaButton)
+//            }
 //        }
 //
 //        binding.kullaniciBilgileriButton.setOnClickListener {
-//            onClick(binding.kullaniciBilgileriButton)
+//            coroutineScope.launch {
+//                onClick(binding.kullaniciBilgileriButton)
+//            }
 //        }
 //    }
 
-    private fun onClick(button: Button) {
+
+    private suspend fun onClick(button: Button) {
+        var bundle: Bundle = intent.extras!!
+
+        val id: Int = bundle.getString("id")!!.toInt()
         val cardView = findViewById<CardView>(R.id.cardview)
+        val carsDetailApi = ServiceBuilder.buildService().create(ServiceDetailInterface::class.java)
+        val response = withContext(Dispatchers.IO) {
+            carsDetailApi.getView(id).execute()
+        }
 
         when (button.id) {
             R.id.ilan_bilgileri_button -> {
@@ -97,12 +119,18 @@ class DetailActivity : AppCompatActivity() {
                 val tvDate = ilanBilgileriView.findViewById<TextView>(R.id.tvDate)
                 val tvModel = ilanBilgileriView.findViewById<TextView>(R.id.tvModel)
                 val tvPrice = ilanBilgileriView.findViewById<TextView>(R.id.tvPrice)
+                val tvGear=ilanBilgileriView.findViewById<TextView>(R.id.tvGear)
+                val tvYear=ilanBilgileriView.findViewById<TextView>(R.id.tvYear)
+                val tvKm=ilanBilgileriView.findViewById<TextView>(R.id.tvKm)
+                val tvId= ilanBilgileriView.findViewById<TextView>(R.id.tvId)
 
-
-                tvModel.text = "responseBody.modelName"
-                tvPrice.text = "responseBody.priceFormatted"
-                tvDate.text = "responseBody.dateFormatted"
-
+                tvId.text = response.body()!!.id.toString()
+                tvModel.text = response.body()!!.modelName
+                tvPrice.text = response.body()!!.priceFormatted
+                tvDate.text = response.body()!!.dateFormatted
+                tvYear.text = response.body()!!.properties[2].value
+                tvKm.text = response.body()!!.properties[0].value
+                tvGear.text = response.body()!!.properties[3].value
 
                 // İlgili XML bileşenlerini ConstraintLayout içine ekleme
                 cardView.removeAllViews()
@@ -119,8 +147,11 @@ class DetailActivity : AppCompatActivity() {
                 // İlgili TextView bileşenlerine metinleri atayın
                 val tvExp = aciklamaView.findViewById<TextView>(R.id.tvExp)
 
+                //öncelikle gelecek açıklama text i için içerisinden html etiketlerini temizliyorum ve html e çeviriyorum
+                val cleanText = Jsoup.clean(response.body()!!.text, Whitelist.none())
+                val doc: Document = Jsoup.parseBodyFragment(cleanText)
 
-                tvExp.text = "responseBody.text.htmlEncode()"
+                tvExp.text = doc.body().html()
 
                 // İlgili XML bileşenini ConstraintLayout içine ekleme
                 cardView.removeAllViews()
@@ -140,9 +171,9 @@ class DetailActivity : AppCompatActivity() {
                 val tvUserPhone =
                     kullaniciBilgileriView.findViewById<TextView>(R.id.tvUserPhone)
 
-                tvId.text = "responseBody.userInfo.id.toString()"
-                tvUserName.text = "responseBody.userInfo.nameSurname"
-                tvUserPhone.text = "responseBody.userInfo.phoneFormatted"
+                tvId.text = response.body()!!.userInfo.id.toString()
+                tvUserName.text = response.body()!!.userInfo.nameSurname
+                tvUserPhone.text = response.body()!!.userInfo.phoneFormatted
 
                 // İlgili XML bileşenlerini ConstraintLayout içine ekleme
                 cardView.removeAllViews()
