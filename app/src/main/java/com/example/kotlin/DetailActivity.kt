@@ -1,6 +1,7 @@
 package com.example.kotlin
 
 import android.content.Context
+import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.view.LayoutInflater
@@ -28,7 +29,9 @@ class DetailActivity : AppCompatActivity() {
     private lateinit var handler: Handler
     private lateinit var photos: ArrayList<String>
     private lateinit var adapter: ImagePagerAdapter
-
+    private var selectedButtonId: Int = 0
+    private val selectedTextColor = Color.BLACK
+    private val defaultTextColor = Color.WHITE
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,18 +63,21 @@ class DetailActivity : AppCompatActivity() {
             coroutineScope.launch {
                 onClick(binding.ilanBilgileriButton)
             }
+            updateButtonSelection(binding.ilanBilgileriButton.id)
         }
 
         binding.aciklamaButton.setOnClickListener {
             coroutineScope.launch {
                 onClick(binding.aciklamaButton)
             }
+            updateButtonSelection(binding.aciklamaButton.id)
         }
 
         binding.kullaniciBilgileriButton.setOnClickListener {
             coroutineScope.launch {
                 onClick(binding.kullaniciBilgileriButton)
             }
+            updateButtonSelection(binding.kullaniciBilgileriButton.id)
         }
 
     }
@@ -97,6 +103,22 @@ class DetailActivity : AppCompatActivity() {
 //        }
 //    }
 
+    private fun updateButtonSelection(selectedId: Int) {
+        // Seçilen butonun rengini değiştir
+        val selectedButton = findViewById<Button>(selectedId)
+        selectedButton.setBackgroundResource(R.drawable.selected_button_background)
+        selectedButton.setTextColor(selectedTextColor)
+
+        // Daha önce seçilen butonun rengini eski haline getir
+        if (selectedButtonId != 0 && selectedButtonId != selectedId) {
+            val previousButton = findViewById<Button>(selectedButtonId)
+            previousButton.setBackgroundResource(R.drawable.button_background)
+            previousButton.setTextColor(defaultTextColor)
+        }
+
+        // Seçili butonun ID'sini güncelle
+        selectedButtonId = selectedId
+    }
 
     private suspend fun onClick(button: Button) {
         var bundle: Bundle = intent.extras!!
@@ -123,6 +145,7 @@ class DetailActivity : AppCompatActivity() {
                 val tvYear=ilanBilgileriView.findViewById<TextView>(R.id.tvYear)
                 val tvKm=ilanBilgileriView.findViewById<TextView>(R.id.tvKm)
                 val tvId= ilanBilgileriView.findViewById<TextView>(R.id.tvId)
+                val tvFuel=ilanBilgileriView.findViewById<TextView>(R.id.tvFuel)
 
                 tvId.text = response.body()!!.id.toString()
                 tvModel.text = response.body()!!.modelName
@@ -131,6 +154,9 @@ class DetailActivity : AppCompatActivity() {
                 tvYear.text = response.body()!!.properties[2].value
                 tvKm.text = response.body()!!.properties[0].value
                 tvGear.text = response.body()!!.properties[3].value
+                tvFuel.text=response.body()!!.properties[4].value
+
+                println("PROPERTIESS EHE"+ response.body()!!.properties.toString())
 
                 // İlgili XML bileşenlerini ConstraintLayout içine ekleme
                 cardView.removeAllViews()

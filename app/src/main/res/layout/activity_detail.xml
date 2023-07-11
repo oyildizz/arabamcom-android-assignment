@@ -34,7 +34,7 @@
         <ImageView
             android:id="@+id/imageViewDetail"
             android:layout_width="0dp"
-            android:layout_height="170dp"
+            android:layout_height="130dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tvTitle"
@@ -74,16 +74,17 @@
             <Button
                 android:id="@+id/ilan_bilgileri_button"
                 android:layout_width="120dp"
-                android:layout_height="50dp"
+                android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"
                 android:layout_marginRight="5dp"
                 android:text="@string/ilan_bilgileri"
-                android:textSize="13sp" />
+                android:textSize="13sp"
+               />
 
             <Button
                 android:id="@+id/aciklama_button"
                 android:layout_width="120dp"
-                android:layout_height="50dp"
+                android:layout_height="wrap_content"
 
                 android:layout_marginLeft="5dp"
                 android:layout_marginRight="5dp"
@@ -94,7 +95,7 @@
             <Button
                 android:id="@+id/kullanici_bilgileri_button"
                 android:layout_width="120dp"
-                android:layout_height="50dp"
+                android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"
                 android:layout_marginRight="5dp"
                 android:text="@string/kullanici_bilgileri"

@@ -11,17 +11,21 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingRight="10dp"
+        android:paddingBottom="5dp"
         android:text="TextView"
         android:textSize="13sp"
         app:layout_constraintBottom_toTopOf="@+id/tvDate"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+
     <TextView
         android:id="@+id/textView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingLeft="10dp"
+        android:paddingEnd="5dp"
+        android:paddingBottom="5dp"
         android:text="İlan No"
         android:textColor="@color/black"
         android:textSize="13sp"
@@ -29,11 +33,19 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="0.1dp"
+        android:background="@android:color/black"
+        app:layout_constraintTop_toBottomOf="@+id/tvId" />
+
     <TextView
         android:id="@+id/textView4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingLeft="10dp"
+        android:paddingEnd="5dp"
+        android:paddingBottom="5dp"
         android:text="İlan Tarihi"
         android:textColor="@color/black"
         android:textSize="13sp"
@@ -46,17 +58,26 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingRight="10dp"
+        android:paddingBottom="5dp"
         android:text="TextView"
         android:textSize="13sp"
         app:layout_constraintBottom_toTopOf="@+id/tvModel"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvId" />
 
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="0.1dp"
+        android:background="@android:color/black"
+        app:layout_constraintTop_toBottomOf="@+id/tvDate" />
+
     <TextView
         android:id="@+id/textView5"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingLeft="10dp"
+        android:paddingEnd="5dp"
+        android:paddingBottom="5dp"
         android:text="Model"
         android:textColor="@color/black"
         android:textSize="13sp"
@@ -69,17 +90,26 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingRight="10dp"
+        android:paddingBottom="5dp"
         android:text="TextView"
         android:textSize="13sp"
         app:layout_constraintBottom_toTopOf="@+id/tvPrice"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvDate" />
 
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="0.1dp"
+        android:background="@android:color/black"
+        app:layout_constraintTop_toBottomOf="@+id/tvModel" />
+
     <TextView
         android:id="@+id/textView3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingLeft="10dp"
+        android:paddingEnd="5dp"
+        android:paddingBottom="5dp"
         android:text="Fiyat"
         android:textColor="@color/black"
         android:textSize="13sp"
@@ -92,17 +122,26 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingRight="10dp"
+        android:paddingBottom="5dp"
         android:text="TextView"
         android:textSize="13sp"
         app:layout_constraintBottom_toTopOf="@+id/tvYear"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvModel" />
 
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="0.1dp"
+        android:background="@android:color/black"
+        app:layout_constraintTop_toBottomOf="@+id/tvPrice" />
+
     <TextView
         android:id="@+id/textView6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingLeft="10dp"
+        android:paddingEnd="5dp"
+        android:paddingBottom="5dp"
         android:text="Yıl"
         android:textColor="@color/black"
         app:layout_constraintBottom_toTopOf="@+id/textView11"
@@ -114,16 +153,25 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingRight="10dp"
+        android:paddingBottom="5dp"
         android:text="TextView"
         app:layout_constraintBottom_toTopOf="@+id/tvKm"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvPrice" />
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="0.1dp"
+        android:background="@android:color/black"
+        app:layout_constraintTop_toBottomOf="@+id/tvYear" />
 
     <TextView
         android:id="@+id/textView11"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingLeft="10dp"
+        android:paddingEnd="5dp"
+        android:paddingBottom="5dp"
         android:text="Kilometre"
         android:textColor="@color/black"
         app:layout_constraintBottom_toTopOf="@+id/textView13"
@@ -135,19 +183,28 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingRight="10dp"
+        android:paddingBottom="5dp"
         android:text="TextView"
         app:layout_constraintBottom_toTopOf="@+id/tvGear"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvYear" />
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="0.1dp"
+        android:background="@android:color/black"
+        app:layout_constraintTop_toBottomOf="@+id/tvKm" />
 
     <TextView
         android:id="@+id/textView13"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingLeft="10dp"
+        android:paddingEnd="5dp"
+        android:paddingBottom="5dp"
         android:text="Vites Tipi"
         android:textColor="@color/black"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/textView7"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView11" />
 
@@ -156,9 +213,40 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingRight="10dp"
+        android:paddingBottom="5dp"
+        android:text="TextView"
+        app:layout_constraintBottom_toTopOf="@+id/tvFuel"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvKm" />
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="0.1dp"
+        android:background="@android:color/black"
+        app:layout_constraintTop_toBottomOf="@+id/tvGear" />
+
+    <TextView
+        android:id="@+id/textView7"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="10dp"
+        android:paddingEnd="5dp"
+        android:paddingBottom="5dp"
+        android:text="Yakıt Tipi"
+        android:textColor="@color/black"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView13" />
+
+    <TextView
+        android:id="@+id/tvFuel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingRight="10dp"
+        android:paddingBottom="5dp"
         android:text="TextView"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvKm" />
+        app:layout_constraintTop_toBottomOf="@+id/tvGear" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

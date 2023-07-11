@@ -29,7 +29,7 @@
             android:layout_height="wrap_content"
             android:paddingLeft="10dp"
             android:paddingTop="10dp"
-            android:text="Item"
+            android:text=""
             android:textAlignment="textStart"
             android:textSize="11dp"
             android:textStyle="bold"
@@ -53,7 +53,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="23dp"
-            android:text="TextView"
+            android:text=""
 
             android:textSize="11sp"
             app:layout_constraintBottom_toBottomOf="parent"
