@@ -1,15 +1,19 @@
-package com.example.kotlin
+package com.example.kotlin.activity
 
-import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.kotlin.adapter.PropertiesAdapter
 import com.example.kotlin.databinding.ActivityMainBinding
-import kotlinx.coroutines.*
+import com.example.kotlin.service.ServiceBuilder
+import com.example.kotlin.api.ServiceInterface
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
-class MainActivity : AppCompatActivity()  {
+class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -17,12 +21,11 @@ class MainActivity : AppCompatActivity()  {
 
         binding.recyclerview.layoutManager = LinearLayoutManager(this)
 
-
         val coroutineScope = CoroutineScope(Dispatchers.Main)
         coroutineScope.launch {
             getAllProducts()
-
         }
+
     }
 
     private suspend fun getAllProducts() {
@@ -35,7 +38,7 @@ class MainActivity : AppCompatActivity()  {
             }
 
             if (response.isSuccessful) {
-                val adapter = PropertiesAdapter(response.body()!!,this)
+                val adapter = PropertiesAdapter(response.body()!!, this)
                 binding.recyclerview.adapter = adapter
 //                println("successs" + response.body()!!.first().photo.toString())
             } else {
@@ -46,30 +49,4 @@ class MainActivity : AppCompatActivity()  {
         }
     }
 
-
-
-//        retrofit.getAllProducts().enqueue(object : Callback<ApiResponse>{
-//            override fun onResponse(call: Call<ApiResponse>, response: Response<ApiResponse>) {
-////                try{
-//                    //to avoid nulPointerException
-//                    println("INSIDE RESPONSEEEEE")
-////                    val responseBody= response.body()!!
-////                    data = responseBody.products
-//                    println("ups" + response.toString())
-////                    var adapter= PropertiesAdapter(data)
-////                    binding.recyclerview.adapter=adapter
-//
-////                }
-////                catch (ex: java.lang.Exception){
-////                    println("HATA ALINDI")
-////                    ex.printStackTrace()
-////                }
-//            }
-//
-//            override fun onFailure(call: Call<ApiResponse>, t: Throwable) {
-//                t.printStackTrace()
-//                Log.e("Failed", "Api Failed" + t.message)
-//            }
-
-//        })
 }

@@ -1,8 +1,8 @@
-package com.example.kotlin
+package com.example.kotlin.api
 
+import com.example.kotlin.model.ApiDetailResponse
 import retrofit2.Call
 import retrofit2.http.GET
-import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface ServiceDetailInterface {

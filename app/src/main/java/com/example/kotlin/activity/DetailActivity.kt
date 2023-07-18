@@ -1,18 +1,21 @@
-package com.example.kotlin
+package com.example.kotlin.activity
 
-import android.content.Context
+import android.annotation.SuppressLint
 import android.graphics.Color
 import android.os.Bundle
-import android.os.Handler
 import android.view.LayoutInflater
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.core.view.children
-import androidx.viewpager.widget.ViewPager
+import androidx.viewpager2.widget.ViewPager2
+import com.example.kotlin.R
+import com.example.kotlin.adapter.ImagePagerAdapter
+import com.example.kotlin.api.ServiceDetailInterface
 import com.example.kotlin.databinding.ActivityDetailBinding
-import com.squareup.picasso.Picasso
+import com.example.kotlin.model.ApiDetailResponse
+import com.example.kotlin.service.ServiceBuilder
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -23,26 +26,23 @@ import org.jsoup.safety.Whitelist
 
 class DetailActivity : AppCompatActivity() {
     private lateinit var binding: ActivityDetailBinding
-    private var context: Context? = null
 
-    private lateinit var viewPager: ViewPager
-    private lateinit var handler: Handler
-    private lateinit var photos: ArrayList<String>
-    private lateinit var adapter: ImagePagerAdapter
+    private val pageChangeCallback= object: ViewPager2.OnPageChangeCallback(){
+        override fun onPageSelected(position: Int) {
+            super.onPageSelected(position)
+        }
+    }
     private var selectedButtonId: Int = 0
     private val selectedTextColor = Color.BLACK
     private val defaultTextColor = Color.WHITE
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        var bundle: Bundle = intent.extras!!
 
+        val bundle: Bundle = intent.extras!!
         val id: Int = bundle.getString("id")!!.toInt()
-
-
         binding.tvTitle.text = title.toString()
 
         val coroutineScope = CoroutineScope(Dispatchers.Main)
@@ -50,13 +50,6 @@ class DetailActivity : AppCompatActivity() {
             getView(id)
             onClick(binding.ilanBilgileriButton)
         }
-
-//        val response = ServiceBuilder.buildService().create(ServiceDetailInterface::class.java).getView(id).execute()
-//        val responseBody = response.body()
-//        if (responseBody != null) {
-//            setOnClickListeners(responseBody)
-//        }
-//        onClick(binding.root)
 
 
         binding.ilanBilgileriButton.setOnClickListener {
@@ -81,26 +74,24 @@ class DetailActivity : AppCompatActivity() {
         }
 
     }
+    private fun setImagePagerAdapter(responseBody:ApiDetailResponse) : ImagePagerAdapter{
+        return ImagePagerAdapter(responseBody.photos)
+    }
 
-//    private fun setOnClickListeners(responseBody: ApiDetailResponse) {
-//        val coroutineScope = CoroutineScope(Dispatchers.Main)
-//        binding.ilanBilgileriButton.setOnClickListener {
-//            coroutineScope.launch {
-//                onClick(binding.ilanBilgileriButton)
-//            }
-//        }
-//
-//        binding.aciklamaButton.setOnClickListener {
-//            coroutineScope.launch {
-//                onClick(binding.aciklamaButton)
-//            }
-//        }
-//
-//        binding.kullaniciBilgileriButton.setOnClickListener {
-//            coroutineScope.launch {
-//                onClick(binding.kullaniciBilgileriButton)
-//            }
-//        }
+    private fun setViewPager2Adapter(responseBody:ApiDetailResponse){
+        //TODO: scoope functions
+        with(binding){
+            viewPager2.adapter=setImagePagerAdapter(responseBody)
+            viewPager2.registerOnPageChangeCallback(pageChangeCallback)
+        }
+    }
+
+
+//    Picasso.get().load(responseBody.photos[0].replace("{0}", "800x600"))
+//    .into(binding.imageViewDetail)
+//    fun getImagesFromApi(responseBody:ApiDetailResponse){
+//    for( (index,image) in responseBody.photos.withIndex())
+//      Picasso.get().load(image.replace("{0}", "800x600")).into()
 //    }
 
     private fun updateButtonSelection(selectedId: Int) {
@@ -120,8 +111,9 @@ class DetailActivity : AppCompatActivity() {
         selectedButtonId = selectedId
     }
 
+    @SuppressLint("InflateParams")
     private suspend fun onClick(button: Button) {
-        var bundle: Bundle = intent.extras!!
+        val bundle: Bundle = intent.extras!!
 
         val id: Int = bundle.getString("id")!!.toInt()
         val cardView = findViewById<CardView>(R.id.cardview)
@@ -129,11 +121,11 @@ class DetailActivity : AppCompatActivity() {
         val response = withContext(Dispatchers.IO) {
             carsDetailApi.getView(id).execute()
         }
-
+        val inflater = LayoutInflater.from(this)
         when (button.id) {
             R.id.ilan_bilgileri_button -> {
                 // İlan bilgileri butonuna tıklanıldığında yapılacak işlemler
-                val inflater = LayoutInflater.from(this)
+
                 val ilanBilgileriView = inflater.inflate(R.layout.ilan_bilgileri, null)
 
 
@@ -167,7 +159,6 @@ class DetailActivity : AppCompatActivity() {
 
             R.id.aciklama_button -> {
                 // Açıklama butonuna tıklanıldığında yapılacak işlemler
-                val inflater = LayoutInflater.from(this)
                 val aciklamaView = inflater.inflate(R.layout.aciklama, null)
 
                 // İlgili TextView bileşenlerine metinleri atayın
@@ -186,7 +177,6 @@ class DetailActivity : AppCompatActivity() {
 
             R.id.kullanici_bilgileri_button -> {
                 // Kullanıcı bilgileri butonuna tıklanıldığında yapılacak işlemler
-                val inflater = LayoutInflater.from(this)
                 val kullaniciBilgileriView =
                     inflater.inflate(R.layout.kullanici_bilgileri, null)
 
@@ -208,20 +198,20 @@ class DetailActivity : AppCompatActivity() {
         }
 
     }
-
-    private suspend fun getView(id: Int) {
+    private suspend fun getView(id: Int): ApiDetailResponse? {
 
         val carDetailApi = ServiceBuilder.buildService().create(ServiceDetailInterface::class.java)
-        println("ID NEDİR BUDUR" + id)
+        println("ID NEDİR BUDUR$id")
         try {
             val response = withContext(Dispatchers.IO) {
                 carDetailApi.getView(id).execute()
             }
             if (response.isSuccessful) {
                 val responseBody = response.body()
-                println("response" + responseBody)
+                println("response$responseBody")
                 if (responseBody != null) {
                     setParameters(responseBody)
+                    setViewPager2Adapter(responseBody)
                     println("successs" + responseBody.userInfo.nameSurname)
                 } else {
                     println("Response body is null in detail.")
@@ -232,20 +222,13 @@ class DetailActivity : AppCompatActivity() {
         } catch (e: Exception) {
             println("errorr" + e.message)
         }
+    return null
     }
 
-    fun setParameters(responseBody: ApiDetailResponse) {
-        Picasso.get().load(responseBody.photos[0].replace("{0}", "800x600"))
-            .into(binding.imageViewDetail)
+    private fun setParameters(responseBody: ApiDetailResponse) {
         binding.tvTitle.text = responseBody.title
         binding.tvUserName.text = responseBody.userInfo.nameSurname
         binding.tvLocation.text = responseBody.location.cityName
-//      binding.tvModel.text = responseBody.modelName
-//      binding.tvPrice.text = responseBody.priceFormatted
-//      binding.tvDate.text = responseBody.dateFormatted
-//      binding.tvExp.text=responseBody.text
-//      binding.tvUserPhone.text=responseBody.userInfo.phoneFormatted
+
     }
-
-
 }

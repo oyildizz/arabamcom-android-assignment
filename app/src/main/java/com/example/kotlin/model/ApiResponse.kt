@@ -1,9 +1,9 @@
-package com.example.kotlin
+package com.example.kotlin.model
 
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
-data class ApiDetailResponse(
+data class ApiResponse(
     @Expose
     @SerializedName("id")
     val id: Int,
@@ -32,34 +32,12 @@ data class ApiDetailResponse(
     @SerializedName("dateFormatted")
     val dateFormatted: String,
     @Expose
-    @SerializedName("photos")
-    val photos:List<String>,
+    @SerializedName("photo")
+    val photo: String,
     @Expose
     @SerializedName("properties")
-    val properties: List<Property>,
-    @Expose
-    @SerializedName("text")
-    val text:String,
-    @Expose
-    @SerializedName("userInfo")
-    val userInfo: UserInfo
+    val properties: List<Property>
 )
-
-data class UserInfo(
-    @Expose
-    @SerializedName("id")
-    val id: Int,
-    @Expose
-    @SerializedName("nameSurname")
-    val nameSurname: String,
-    @Expose
-    @SerializedName("phone")
-    val phone: String,
-    @Expose
-    @SerializedName("phoneFormatted")
-    val phoneFormatted: String
-)
-
 
 
 

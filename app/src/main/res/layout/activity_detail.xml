@@ -15,7 +15,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="10dp"
-        tools:context=".DetailActivity">
+        tools:context=".activity.DetailActivity">
 
 
         <TextView
@@ -30,6 +30,15 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:text="ARABA BASLİK" />
 
+
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/viewPager2"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toTopOf="@+id/tvUserName"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/imageViewDetail" />
 
         <ImageView
             android:id="@+id/imageViewDetail"
@@ -78,8 +87,7 @@
                 android:layout_marginLeft="5dp"
                 android:layout_marginRight="5dp"
                 android:text="@string/ilan_bilgileri"
-                android:textSize="13sp"
-               />
+                android:textSize="13sp" />
 
             <Button
                 android:id="@+id/aciklama_button"
@@ -109,6 +117,5 @@
 
         android:id="@+id/cardview"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-         />
+        android:layout_height="match_parent" />
 </LinearLayout>
