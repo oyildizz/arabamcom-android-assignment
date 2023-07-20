@@ -3,12 +3,15 @@ package com.example.kotlin.activity
 import android.annotation.SuppressLint
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.core.view.children
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.widget.ViewPager2
 import com.example.kotlin.R
 import com.example.kotlin.adapter.ImagePagerAdapter
@@ -19,6 +22,7 @@ import com.example.kotlin.service.ServiceBuilder
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import com.example.kotlin.viewModel.DetailViewModel
 import kotlinx.coroutines.withContext
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -26,8 +30,11 @@ import org.jsoup.safety.Whitelist
 
 class DetailActivity : AppCompatActivity() {
     private lateinit var binding: ActivityDetailBinding
+    private lateinit var detailViewModel: DetailViewModel
+    private lateinit var detailDataObserver: Observer<ApiDetailResponse>
 
-    private val pageChangeCallback= object: ViewPager2.OnPageChangeCallback(){
+
+    private val pageChangeCallback = object : ViewPager2.OnPageChangeCallback() {
         override fun onPageSelected(position: Int) {
             super.onPageSelected(position)
         }
@@ -35,22 +42,42 @@ class DetailActivity : AppCompatActivity() {
     private var selectedButtonId: Int = 0
     private val selectedTextColor = Color.BLACK
     private val defaultTextColor = Color.WHITE
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-
         val bundle: Bundle = intent.extras!!
         val id: Int = bundle.getString("id")!!.toInt()
         binding.tvTitle.text = title.toString()
 
+        // DetailViewModel'in örneğini aldım
+        detailViewModel = ViewModelProvider(this).get(DetailViewModel::class.java)
+
+        // LiveData'nı observe etmek için Observer oluşturdum
+        detailDataObserver = Observer { apiDetailResponse ->
+            apiDetailResponse?.let {
+                setParameters(apiDetailResponse)
+                setViewPager2Adapter(apiDetailResponse)
+            }
+            Log.d("MainActivity", "carsDetail LiveData updated, new data: $apiDetailResponse")
+        }
+        // LiveData'yı observe ettim
+        detailViewModel.detailData.observe(this, detailDataObserver)
+
+        // Verileri API'den al ve UI'ı güncellemek için LiveData'yı gözlemledim
         val coroutineScope = CoroutineScope(Dispatchers.Main)
         coroutineScope.launch {
-            getView(id)
+            detailViewModel.getView(id)
             onClick(binding.ilanBilgileriButton)
         }
 
+//        // Observe the detailData LiveData to update UI when data is received
+//        detailViewModel.detailData.observe(this) { apiDetailResponse ->
+//            setParameters(apiDetailResponse)
+//            setViewPager2Adapter(apiDetailResponse)
+//        }
 
         binding.ilanBilgileriButton.setOnClickListener {
             coroutineScope.launch {
@@ -72,29 +99,15 @@ class DetailActivity : AppCompatActivity() {
             }
             updateButtonSelection(binding.kullaniciBilgileriButton.id)
         }
-
-    }
-    private fun setImagePagerAdapter(responseBody:ApiDetailResponse) : ImagePagerAdapter{
-        return ImagePagerAdapter(responseBody.photos)
     }
 
-    private fun setViewPager2Adapter(responseBody:ApiDetailResponse){
-        //TODO: scoope functions
-        with(binding){
-            viewPager2.adapter=setImagePagerAdapter(responseBody)
-            viewPager2.registerOnPageChangeCallback(pageChangeCallback)
-        }
+    override fun onDestroy() {
+        super.onDestroy()
+        // LiveData'nın observe işlemini kaldırdım
+        detailViewModel.detailData.removeObserver(detailDataObserver)
     }
 
-
-//    Picasso.get().load(responseBody.photos[0].replace("{0}", "800x600"))
-//    .into(binding.imageViewDetail)
-//    fun getImagesFromApi(responseBody:ApiDetailResponse){
-//    for( (index,image) in responseBody.photos.withIndex())
-//      Picasso.get().load(image.replace("{0}", "800x600")).into()
-//    }
-
-    private fun updateButtonSelection(selectedId: Int) {
+        private fun updateButtonSelection(selectedId: Int) {
         // Seçilen butonun rengini değiştir
         val selectedButton = findViewById<Button>(selectedId)
         selectedButton.setBackgroundResource(R.drawable.selected_button_background)
@@ -111,6 +124,17 @@ class DetailActivity : AppCompatActivity() {
         selectedButtonId = selectedId
     }
 
+    private fun setImagePagerAdapter(responseBody: ApiDetailResponse): ImagePagerAdapter {
+        return ImagePagerAdapter(responseBody.photos)
+    }
+
+    private fun setViewPager2Adapter(responseBody: ApiDetailResponse) {
+        //TODO: scoope functions
+        with(binding) {
+            viewPager2.adapter = setImagePagerAdapter(responseBody)
+            viewPager2.registerOnPageChangeCallback(pageChangeCallback)
+        }
+    }
     @SuppressLint("InflateParams")
     private suspend fun onClick(button: Button) {
         val bundle: Bundle = intent.extras!!
@@ -198,37 +222,13 @@ class DetailActivity : AppCompatActivity() {
         }
 
     }
-    private suspend fun getView(id: Int): ApiDetailResponse? {
-
-        val carDetailApi = ServiceBuilder.buildService().create(ServiceDetailInterface::class.java)
-        println("ID NEDİR BUDUR$id")
-        try {
-            val response = withContext(Dispatchers.IO) {
-                carDetailApi.getView(id).execute()
-            }
-            if (response.isSuccessful) {
-                val responseBody = response.body()
-                println("response$responseBody")
-                if (responseBody != null) {
-                    setParameters(responseBody)
-                    setViewPager2Adapter(responseBody)
-                    println("successs" + responseBody.userInfo.nameSurname)
-                } else {
-                    println("Response body is null in detail.")
-                }
-            } else {
-                println("errorr" + response.message())
-            }
-        } catch (e: Exception) {
-            println("errorr" + e.message)
-        }
-    return null
-    }
 
     private fun setParameters(responseBody: ApiDetailResponse) {
         binding.tvTitle.text = responseBody.title
         binding.tvUserName.text = responseBody.userInfo.nameSurname
         binding.tvLocation.text = responseBody.location.cityName
-
     }
+
 }
+
+
