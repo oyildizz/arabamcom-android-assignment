@@ -2,6 +2,7 @@ package com.example.kotlin.activity
 
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -33,10 +34,20 @@ class MainActivity : AppCompatActivity() {
         carsObserver = Observer<List<ApiResponse>> { cars ->
             // LiveData'ın değiştiği zaman burası çalışır ve UI'ı günceller
             Log.d("MainActivity", "cars LiveData updated, new data: $cars")
-            adapter.updateData(cars) // Adapter'a yeni verileri atayarak güncelleme yapılır
+//            adapter.updateData(cars) // Adapter'a yeni verileri atayarak güncelleme yapılır
+            if (cars.isNotEmpty()) {
+                // Veriler varsa RecyclerView'i güncelle
+                adapter.updateData(cars)
+            } else {
+                // Veri yoksa veya hata oluştuysa kullanıcıya bildirim yap
+                showErrorMessage("Veri bulunamadı veya bir hata oluştu.")
+            }
         }
 
         listViewModel.cars.observe(this, carsObserver)
+    }
+    private fun showErrorMessage(errorMessage: String) {
+        Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show()
     }
 
 //    removeObserver kullanılarak LiveData'ya olan aboneliği kaldırır. Bu, Activity yok

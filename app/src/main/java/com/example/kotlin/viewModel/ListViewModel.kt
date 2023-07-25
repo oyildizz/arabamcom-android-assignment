@@ -29,9 +29,17 @@ class ListViewModel : ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val data = carRepository.getAllProducts()
-                _cars.postValue(data)
-                carsError.postValue(false)
-                Log.d("ListViewModel", "getAllProducts() success, data: $data")
+                if (data.isNotEmpty()) {
+                    // Veriler varsa, LiveData'ı güncelle
+                    _cars.postValue(data)
+                    carsError.postValue(false)
+                    Log.d("ListViewModel", "getAllProducts() success, data: $data")
+                } else {
+                    // Veri yoksa, hatayı işaretle ve gerekirse kullanıcıya bildir
+                    _cars.postValue(emptyList())
+                    carsError.postValue(true)
+                    Log.e("ListViewModel", "getAllProducts() error: No data found.")
+                }
             } catch (e: Exception) {
                 _cars.postValue(emptyList())
                 carsError.postValue(true)

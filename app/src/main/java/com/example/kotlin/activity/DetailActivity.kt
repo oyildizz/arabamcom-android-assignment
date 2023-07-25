@@ -48,10 +48,6 @@ class DetailActivity : AppCompatActivity() {
         binding = ActivityDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val bundle: Bundle = intent.extras!!
-        val id: Int = bundle.getString("id")!!.toInt()
-        binding.tvTitle.text = title.toString()
-
         // DetailViewModel'in örneğini aldım
         detailViewModel = ViewModelProvider(this).get(DetailViewModel::class.java)
 
@@ -66,9 +62,13 @@ class DetailActivity : AppCompatActivity() {
         // LiveData'yı observe ettim
         detailViewModel.detailData.observe(this, detailDataObserver)
 
-        // Verileri API'den al ve UI'ı güncellemek için LiveData'yı gözlemledim
         val coroutineScope = CoroutineScope(Dispatchers.Main)
         coroutineScope.launch {
+            val bundle: Bundle = intent.extras!!
+            val id: Int = bundle.getString("id")!!.toInt()
+            binding.tvTitle.text = title.toString()
+
+            // Verileri API'den al ve UI'ı güncellemek için LiveData'yı gözlemledim
             detailViewModel.getView(id)
             onClick(binding.ilanBilgileriButton)
         }
@@ -228,7 +228,6 @@ class DetailActivity : AppCompatActivity() {
         binding.tvUserName.text = responseBody.userInfo.nameSurname
         binding.tvLocation.text = responseBody.location.cityName
     }
-
 }
 
 

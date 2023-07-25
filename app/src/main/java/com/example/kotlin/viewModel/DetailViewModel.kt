@@ -22,7 +22,6 @@ class DetailViewModel : ViewModel() {
             val response = withContext(Dispatchers.IO) {
                 carRepository.getProductDetail(id)
             }
-
             _detailData.postValue(response)
             detailDataError.postValue(false)
         } catch (e: Exception) {
