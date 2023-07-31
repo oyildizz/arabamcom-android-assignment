@@ -14,7 +14,6 @@ abstract class CarsDatabase: RoomDatabase() {
 //    abstract fun locationDao(): LocationDAO
 //    abstract fun categoryDao(): CategoryDAO
 
-//TODO companion chatgpt
     companion object {
         private var dbINSTANCE: CarsDatabase? = null
 
