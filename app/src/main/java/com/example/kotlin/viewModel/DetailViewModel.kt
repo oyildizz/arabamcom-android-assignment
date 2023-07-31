@@ -19,22 +19,6 @@ class DetailViewModel @Inject constructor() : ViewModel() {
     private val detailDataLoading= MutableLiveData<Boolean>()
     val detailData: MutableLiveData<ApiDetailResponse> get() = _detailData
 
-
-    private val _userInfo = MutableLiveData<User>()
-    val userInfo: MutableLiveData<User> get() = _userInfo
-
-
-//    fun insertUser(user: User) {
-//        val userDao = CarsDatabase.getDatabase(appContext)?.userInfoDao()
-//        userDao?.insert(user)
-//    }
-//
-//    fun getUserInfoFromRoom() {
-//        val userDao = CarsDatabase.getDatabase(appContext)?.userInfoDao()
-//        val userInfoLiveData = userDao?.getUserInfo()
-//        _userInfo.postValue(userInfoLiveData?.value?.firstOrNull())
-//    }
-
     @SuppressLint("NullSafeMutableLiveData")
     suspend fun getView(id: Int) {
         try {
