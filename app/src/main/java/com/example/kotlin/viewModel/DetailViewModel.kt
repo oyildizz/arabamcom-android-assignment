@@ -12,13 +12,11 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
-class DetailViewModel @Inject constructor(
-    private val carRepository: CarsRepository,
-    private val _detailData: MutableLiveData<ApiDetailResponse>,
-    private val detailDataError: MutableLiveData<Boolean>,
-    private val detailDataLoading: MutableLiveData<Boolean>
-) : ViewModel() {
-
+class DetailViewModel @Inject constructor() : ViewModel() {
+    private val carRepository=CarsRepository()
+    private val _detailData=MutableLiveData<ApiDetailResponse>()
+    private val detailDataError= MutableLiveData<Boolean>()
+    private val detailDataLoading= MutableLiveData<Boolean>()
     val detailData: MutableLiveData<ApiDetailResponse> get() = _detailData
 
 
