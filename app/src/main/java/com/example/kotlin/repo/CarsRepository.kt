@@ -8,8 +8,9 @@ import com.example.kotlin.model.ApiResponse
 import com.example.kotlin.service.ServiceBuilder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-class CarsRepository {
+class CarsRepository @Inject constructor() {
     private val carApi = ServiceBuilder.buildService().create(ServiceInterface::class.java)
     private val carDetailApi = ServiceBuilder.buildService().create(ServiceDetailInterface::class.java)
 

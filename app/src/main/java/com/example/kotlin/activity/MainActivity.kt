@@ -11,12 +11,16 @@ import com.example.kotlin.adapter.CarsListingAdapter
 import com.example.kotlin.databinding.ActivityMainBinding
 import com.example.kotlin.model.ApiResponse
 import com.example.kotlin.viewModel.ListViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
-
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
-    private lateinit var listViewModel: ListViewModel
     private lateinit var carsObserver: Observer<List<ApiResponse>>
+
+    // MainViewModel'in örneğini al
+    private val listViewModel by lazy{ ViewModelProvider(this,defaultViewModelProviderFactory).get(ListViewModel::class.java)}
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -24,8 +28,7 @@ class MainActivity : AppCompatActivity() {
 
         binding.recyclerview.layoutManager = LinearLayoutManager(this)
 
-        // MainViewModel'in örneğini al
-        listViewModel = ViewModelProvider(this).get(ListViewModel::class.java)
+
 
         // LiveData'ı observe ederek veri güncellemelerini otomatik olarak dinleme
         val adapter = CarsListingAdapter(emptyList(), this@MainActivity)
@@ -48,6 +51,7 @@ class MainActivity : AppCompatActivity() {
     }
     private fun showErrorMessage(errorMessage: String) {
         Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show()
+        // "Veri bulunamadı" veya "Hata oluştu"
     }
 
 //    removeObserver kullanılarak LiveData'ya olan aboneliği kaldırır. Bu, Activity yok

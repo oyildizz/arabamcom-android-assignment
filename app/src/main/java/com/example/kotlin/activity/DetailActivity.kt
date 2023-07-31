@@ -16,23 +16,30 @@ import androidx.viewpager2.widget.ViewPager2
 import com.example.kotlin.R
 import com.example.kotlin.adapter.ImagePagerAdapter
 import com.example.kotlin.api.ServiceDetailInterface
+import com.example.kotlin.dao.User
+import com.example.kotlin.dao.UsersViewModel
 import com.example.kotlin.databinding.ActivityDetailBinding
 import com.example.kotlin.model.ApiDetailResponse
 import com.example.kotlin.service.ServiceBuilder
+import com.example.kotlin.viewModel.DetailViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import com.example.kotlin.viewModel.DetailViewModel
 import kotlinx.coroutines.withContext
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.safety.Whitelist
 
+@AndroidEntryPoint
 class DetailActivity : AppCompatActivity() {
+
+//    private val viewModel:UsersViewModel by viewModels()   --> viewModels() gelmiyor sebebini arastır
+
     private lateinit var binding: ActivityDetailBinding
     private lateinit var detailViewModel: DetailViewModel
     private lateinit var detailDataObserver: Observer<ApiDetailResponse>
-
+    private lateinit var userViewModel: UsersViewModel
 
     private val pageChangeCallback = object : ViewPager2.OnPageChangeCallback() {
         override fun onPageSelected(position: Int) {
@@ -42,18 +49,27 @@ class DetailActivity : AppCompatActivity() {
     private var selectedButtonId: Int = 0
     private val selectedTextColor = Color.BLACK
     private val defaultTextColor = Color.WHITE
+//    private var userInfo: User? = null
 
+    @SuppressLint("InflateParams")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         // DetailViewModel'in örneğini aldım
-        detailViewModel = ViewModelProvider(this).get(DetailViewModel::class.java)
+        detailViewModel = ViewModelProvider(
+            this,
+            ViewModelProvider.AndroidViewModelFactory.getInstance(application)
+        )[DetailViewModel::class.java]
+
+        userViewModel = ViewModelProvider(
+            this
+        )[UsersViewModel::class.java]
 
         // LiveData'nı observe etmek için Observer oluşturdum
         detailDataObserver = Observer { apiDetailResponse ->
-            apiDetailResponse?.let {
+            apiDetailResponse.let {
                 setParameters(apiDetailResponse)
                 setViewPager2Adapter(apiDetailResponse)
             }
@@ -62,13 +78,17 @@ class DetailActivity : AppCompatActivity() {
         // LiveData'yı observe ettim
         detailViewModel.detailData.observe(this, detailDataObserver)
 
+
+
+        // Verileri API'den al ve UI'ı güncellemek için LiveData'yı gözlemledim
         val coroutineScope = CoroutineScope(Dispatchers.Main)
         coroutineScope.launch {
             val bundle: Bundle = intent.extras!!
             val id: Int = bundle.getString("id")!!.toInt()
             binding.tvTitle.text = title.toString()
 
-            // Verileri API'den al ve UI'ı güncellemek için LiveData'yı gözlemledim
+            // Kullanıcı bilgilerini Room'dan al ve userData değişkenini güncelle
+            setUpUserInfo()
             detailViewModel.getView(id)
             onClick(binding.ilanBilgileriButton)
         }
@@ -93,10 +113,45 @@ class DetailActivity : AppCompatActivity() {
             updateButtonSelection(binding.aciklamaButton.id)
         }
 
+
         binding.kullaniciBilgileriButton.setOnClickListener {
+            val cardView = findViewById<CardView>(R.id.cardview)
+            val inflater = LayoutInflater.from(this)
+
             coroutineScope.launch {
-                onClick(binding.kullaniciBilgileriButton)
+                // Kullanıcı bilgileri butonuna tıklanıldığında yapılacak işlemler
+                val kullaniciBilgileriView =
+                    inflater.inflate(R.layout.kullanici_bilgileri, null)
+
+                // Kullanıcı bilgilerini Room'dan al
+                val user = userViewModel.getRecordsObserver().value
+                Log.e("geTRECORDS", user.toString())
+                if (user == null) {
+                    // Veriler mevcut değilse API'den çek
+                    userViewModel.fetchUserDataFromAPI(intent.extras!!)
+                    Log.e("USERNAME IN IF USER==NULL", user?.nameSurname.toString())
+
+                } else {
+                    Log.e("USERNAME FROM ROOM", user.nameSurname)
+                    // Veriler mevcutsa TextView'lara verileri ata
+                    val tvId = kullaniciBilgileriView.findViewById<TextView>(R.id.tvId)
+                    val tvUserName =
+                        kullaniciBilgileriView.findViewById<TextView>(R.id.textUserName)
+                    val tvUserPhone =
+                        kullaniciBilgileriView.findViewById<TextView>(R.id.tvUserPhone)
+
+                    tvId.text = user.id.toString()
+                    tvUserName.text = user.nameSurname
+                    tvUserPhone.text = user.phoneFormatted
+                }
+
+                // İlgili XML bileşenlerini ConstraintLayout içine ekleme
+                cardView.removeAllViews()
+                cardView.addView(kullaniciBilgileriView)
+
             }
+            setUpUserInfo() // Kullanıcı bilgilerini veritabanına kaydet
+
             updateButtonSelection(binding.kullaniciBilgileriButton.id)
         }
     }
@@ -107,7 +162,31 @@ class DetailActivity : AppCompatActivity() {
         detailViewModel.detailData.removeObserver(detailDataObserver)
     }
 
-        private fun updateButtonSelection(selectedId: Int) {
+
+    private fun setUpUserInfo() {
+        userViewModel.getRecordsObserver().observe(this, Observer { user ->
+            if (user != null) {
+                // Kullanıcı bilgilerini al ve Room veritabanına kaydet
+                val userInfo = User(user.id, user.nameSurname, user.phoneFormatted, user.phone)
+                userViewModel.addUser(userInfo)
+            }
+        })
+    }
+
+//    private fun setUpUserInfo() {
+//        userViewModel.getRecordsObserver().observe(this, Observer<User> {
+//
+//            if (it != null) {
+//                val user = User(0, it.nameSurname, it.phoneFormatted, it.phone)
+//                userViewModel.addUser(user)
+//            } else {
+//                println("NO DATA")
+//
+//            }
+//        })
+//    }
+
+    private fun updateButtonSelection(selectedId: Int) {
         // Seçilen butonun rengini değiştir
         val selectedButton = findViewById<Button>(selectedId)
         selectedButton.setBackgroundResource(R.drawable.selected_button_background)
@@ -135,6 +214,7 @@ class DetailActivity : AppCompatActivity() {
             viewPager2.registerOnPageChangeCallback(pageChangeCallback)
         }
     }
+
     @SuppressLint("InflateParams")
     private suspend fun onClick(button: Button) {
         val bundle: Bundle = intent.extras!!
@@ -157,11 +237,11 @@ class DetailActivity : AppCompatActivity() {
                 val tvDate = ilanBilgileriView.findViewById<TextView>(R.id.tvDate)
                 val tvModel = ilanBilgileriView.findViewById<TextView>(R.id.tvModel)
                 val tvPrice = ilanBilgileriView.findViewById<TextView>(R.id.tvPrice)
-                val tvGear=ilanBilgileriView.findViewById<TextView>(R.id.tvGear)
-                val tvYear=ilanBilgileriView.findViewById<TextView>(R.id.tvYear)
-                val tvKm=ilanBilgileriView.findViewById<TextView>(R.id.tvKm)
-                val tvId= ilanBilgileriView.findViewById<TextView>(R.id.tvId)
-                val tvFuel=ilanBilgileriView.findViewById<TextView>(R.id.tvFuel)
+                val tvGear = ilanBilgileriView.findViewById<TextView>(R.id.tvGear)
+                val tvYear = ilanBilgileriView.findViewById<TextView>(R.id.tvYear)
+                val tvKm = ilanBilgileriView.findViewById<TextView>(R.id.tvKm)
+                val tvId = ilanBilgileriView.findViewById<TextView>(R.id.tvId)
+                val tvFuel = ilanBilgileriView.findViewById<TextView>(R.id.tvFuel)
 
                 tvId.text = response.body()!!.id.toString()
                 tvModel.text = response.body()!!.modelName
@@ -170,9 +250,9 @@ class DetailActivity : AppCompatActivity() {
                 tvYear.text = response.body()!!.properties[2].value
                 tvKm.text = response.body()!!.properties[0].value
                 tvGear.text = response.body()!!.properties[3].value
-                tvFuel.text=response.body()!!.properties[4].value
+                tvFuel.text = response.body()!!.properties[4].value
 
-                println("PROPERTIESS EHE"+ response.body()!!.properties.toString())
+                println("PROPERTIESS EHE" + response.body()!!.properties.toString())
 
                 // İlgili XML bileşenlerini ConstraintLayout içine ekleme
                 cardView.removeAllViews()
@@ -197,27 +277,6 @@ class DetailActivity : AppCompatActivity() {
                 // İlgili XML bileşenini ConstraintLayout içine ekleme
                 cardView.removeAllViews()
                 cardView.addView(aciklamaView)
-            }
-
-            R.id.kullanici_bilgileri_button -> {
-                // Kullanıcı bilgileri butonuna tıklanıldığında yapılacak işlemler
-                val kullaniciBilgileriView =
-                    inflater.inflate(R.layout.kullanici_bilgileri, null)
-
-                // İlgili TextView bileşenlerine metinleri atama
-                val tvId = kullaniciBilgileriView.findViewById<TextView>(R.id.tvId)
-                val tvUserName =
-                    kullaniciBilgileriView.findViewById<TextView>(R.id.textUserName)
-                val tvUserPhone =
-                    kullaniciBilgileriView.findViewById<TextView>(R.id.tvUserPhone)
-
-                tvId.text = response.body()!!.userInfo.id.toString()
-                tvUserName.text = response.body()!!.userInfo.nameSurname
-                tvUserPhone.text = response.body()!!.userInfo.phoneFormatted
-
-                // İlgili XML bileşenlerini ConstraintLayout içine ekleme
-                cardView.removeAllViews()
-                cardView.addView(kullaniciBilgileriView)
             }
         }
 

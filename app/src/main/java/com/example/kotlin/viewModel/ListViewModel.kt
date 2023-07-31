@@ -6,20 +6,26 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.kotlin.model.ApiResponse
 import com.example.kotlin.repo.CarsRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class ListViewModel : ViewModel() {
-    private val carRepository = CarsRepository()
-    private val _cars = MutableLiveData<List<ApiResponse>>()
+@HiltViewModel
+class ListViewModel @Inject constructor(private val carRepository: CarsRepository ): ViewModel() {
+     private var _cars : MutableLiveData<List<ApiResponse>> = MutableLiveData()
     val cars: MutableLiveData<List<ApiResponse>> get() = _cars
 
     private val carsError = MutableLiveData<Boolean>()
     private val carsLoading = MutableLiveData<Boolean>()
 
     init {
-        // ViewModel oluşturulduğunda verileri hemen alalım
+        // ViewModel oluşturulduğunda verileri hemen al
         getAllProducts()
+    }
+
+    fun getRecordObserver():MutableLiveData<List<ApiResponse>>{
+        return _cars
     }
 
     private fun getAllProducts() {
