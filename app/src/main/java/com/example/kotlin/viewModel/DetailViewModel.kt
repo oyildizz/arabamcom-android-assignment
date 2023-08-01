@@ -40,6 +40,5 @@ class DetailViewModel @Inject constructor() : ViewModel() {
             detailDataLoading.postValue(false)
         }
 
-
     }
 }

@@ -69,17 +69,6 @@ class DetailActivity : AppCompatActivity() {
         )[UsersViewModel::class.java]
 
 
-//        // LiveData'nı observe etmek için Observer oluşturdum
-//        detailDataObserver = Observer { apiDetailResponse ->
-//            apiDetailResponse.let {
-//                setParameters(apiDetailResponse)
-//                setViewPager2Adapter(apiDetailResponse)
-//            }
-//            Log.d("MainActivity", "carsDetail LiveData updated, new data: $apiDetailResponse")
-//        }
-        // LiveData'yı observe ettim
-
-
         detailViewModel.getDetailDataObserve().observe(this){
             data->
             data.let {
@@ -89,7 +78,6 @@ class DetailActivity : AppCompatActivity() {
             }
 
         }
-
 
         // Verileri API'den al ve UI'ı güncellemek için LiveData'yı gözlemledim
         val coroutineScope = CoroutineScope(Dispatchers.Main)
@@ -104,11 +92,6 @@ class DetailActivity : AppCompatActivity() {
             onClick(binding.ilanBilgileriButton)
         }
 
-//        // Observe the detailData LiveData to update UI when data is received
-//        detailViewModel.detailData.observe(this) { apiDetailResponse ->
-//            setParameters(apiDetailResponse)
-//            setViewPager2Adapter(apiDetailResponse)
-//        }
 
         binding.ilanBilgileriButton.setOnClickListener {
             coroutineScope.launch {
@@ -123,7 +106,6 @@ class DetailActivity : AppCompatActivity() {
             }
             updateButtonSelection(binding.aciklamaButton.id)
         }
-
 
 
     }
@@ -279,71 +261,69 @@ private fun userInfoBtnClick(userInfo:UserInfo){
         }
     }
 
-    @SuppressLint("InflateParams")
-    private suspend fun onClick(button: Button) {
-        val bundle: Bundle = intent.extras!!
 
-        val id: Int = bundle.getString("id")!!.toInt()
+    private  fun onClick(button: Button) {
         val cardView = findViewById<CardView>(R.id.cardview)
-        val carsDetailApi = ServiceBuilder.buildService().create(ServiceDetailInterface::class.java)
-        val response = withContext(Dispatchers.IO) {
-            carsDetailApi.getView(id).execute()
-        }
+
+       val userLiveData= detailViewModel.getDetailDataObserve()
         val inflater = LayoutInflater.from(this)
-        when (button.id) {
-            R.id.ilan_bilgileri_button -> {
-                // İlan bilgileri butonuna tıklanıldığında yapılacak işlemler
 
-                val ilanBilgileriView = inflater.inflate(R.layout.ilan_bilgileri, null)
+        userLiveData.observe(this, Observer { user ->
+            if (user != null) {
+                when (button.id) {
+                    R.id.ilan_bilgileri_button -> {
+                        // İlan bilgileri butonuna tıklanıldığında yapılacak işlemler
 
+                        val ilanBilgileriView = inflater.inflate(R.layout.ilan_bilgileri, null)
 
-                // İlgili TextView bileşenlerine metinleri atama
-                val tvDate = ilanBilgileriView.findViewById<TextView>(R.id.tvDate)
-                val tvModel = ilanBilgileriView.findViewById<TextView>(R.id.tvModel)
-                val tvPrice = ilanBilgileriView.findViewById<TextView>(R.id.tvPrice)
-                val tvGear = ilanBilgileriView.findViewById<TextView>(R.id.tvGear)
-                val tvYear = ilanBilgileriView.findViewById<TextView>(R.id.tvYear)
-                val tvKm = ilanBilgileriView.findViewById<TextView>(R.id.tvKm)
-                val tvId = ilanBilgileriView.findViewById<TextView>(R.id.tvId)
-                val tvFuel = ilanBilgileriView.findViewById<TextView>(R.id.tvFuel)
+                        // İlgili TextView bileşenlerine metinleri atama
+                        val tvDate = ilanBilgileriView.findViewById<TextView>(R.id.tvDate)
+                        val tvModel = ilanBilgileriView.findViewById<TextView>(R.id.tvModel)
+                        val tvPrice = ilanBilgileriView.findViewById<TextView>(R.id.tvPrice)
+                        val tvGear = ilanBilgileriView.findViewById<TextView>(R.id.tvGear)
+                        val tvYear = ilanBilgileriView.findViewById<TextView>(R.id.tvYear)
+                        val tvKm = ilanBilgileriView.findViewById<TextView>(R.id.tvKm)
+                        val tvId = ilanBilgileriView.findViewById<TextView>(R.id.tvId)
+                        val tvFuel = ilanBilgileriView.findViewById<TextView>(R.id.tvFuel)
 
-                tvId.text = response.body()!!.id.toString()
-                tvModel.text = response.body()!!.modelName
-                tvPrice.text = response.body()!!.priceFormatted
-                tvDate.text = response.body()!!.dateFormatted
-                tvYear.text = response.body()!!.properties[2].value
-                tvKm.text = response.body()!!.properties[0].value
-                tvGear.text = response.body()!!.properties[3].value
-                tvFuel.text = response.body()!!.properties[4].value
+                        tvId.text = user!!.id.toString()
+                        tvModel.text = user.modelName
+                        tvPrice.text = user.priceFormatted
+                        tvDate.text = user.dateFormatted
+                        tvYear.text = user.properties[2].value
+                        tvKm.text = user.properties[0].value
+                        tvGear.text = user.properties[3].value
+                        tvFuel.text = user.properties[4].value
 
-                println("PROPERTIESS EHE" + response.body()!!.properties.toString())
+                        println("PROPERTIESS EHE" + user.properties.toString())
 
-                // İlgili XML bileşenlerini ConstraintLayout içine ekleme
-                cardView.removeAllViews()
-                println("SGSGDSFSDFSD ${cardView.children}")
-                cardView.addView(ilanBilgileriView)
-                println("SARKI BİTTİ ${cardView.children.first().id}")
+                        // İlgili XML bileşenlerini ConstraintLayout içine ekleme
+                        cardView.removeAllViews()
+                        println("SGSGDSFSDFSD ${cardView.children}")
+                        cardView.addView(ilanBilgileriView)
+                        println("SARKI BİTTİ ${cardView.children.first().id}")
+                    }
+
+                    R.id.aciklama_button -> {
+                        // Açıklama butonuna tıklanıldığında yapılacak işlemler
+                        val aciklamaView = inflater.inflate(R.layout.aciklama, null)
+
+                        // İlgili TextView bileşenlerine metinleri atayın
+                        val tvExp = aciklamaView.findViewById<TextView>(R.id.tvExp)
+
+                        //öncelikle gelecek açıklama text i için içerisinden html etiketlerini temizliyorum ve html e çeviriyorum
+                        val cleanText = Jsoup.clean(user!!.text, Whitelist.none())
+                        val doc: Document = Jsoup.parseBodyFragment(cleanText)
+
+                        tvExp.text = doc.body().html()
+
+                        // İlgili XML bileşenini ConstraintLayout içine ekleme
+                        cardView.removeAllViews()
+                        cardView.addView(aciklamaView)
+                    }
+                }
             }
-
-            R.id.aciklama_button -> {
-                // Açıklama butonuna tıklanıldığında yapılacak işlemler
-                val aciklamaView = inflater.inflate(R.layout.aciklama, null)
-
-                // İlgili TextView bileşenlerine metinleri atayın
-                val tvExp = aciklamaView.findViewById<TextView>(R.id.tvExp)
-
-                //öncelikle gelecek açıklama text i için içerisinden html etiketlerini temizliyorum ve html e çeviriyorum
-                val cleanText = Jsoup.clean(response.body()!!.text, Whitelist.none())
-                val doc: Document = Jsoup.parseBodyFragment(cleanText)
-
-                tvExp.text = doc.body().html()
-
-                // İlgili XML bileşenini ConstraintLayout içine ekleme
-                cardView.removeAllViews()
-                cardView.addView(aciklamaView)
-            }
-        }
-
+        })
     }
 
     private fun setParameters(responseBody: ApiDetailResponse) {
