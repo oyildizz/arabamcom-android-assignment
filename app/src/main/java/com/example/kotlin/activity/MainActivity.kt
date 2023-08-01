@@ -19,7 +19,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var carsObserver: Observer<List<ApiResponse>>
 
     // MainViewModel'in örneğini al
-    private val listViewModel by lazy{ ViewModelProvider(this,defaultViewModelProviderFactory).get(ListViewModel::class.java)}
+    private val listViewModel by lazy{ ViewModelProvider(this,defaultViewModelProviderFactory)[ListViewModel::class.java] }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

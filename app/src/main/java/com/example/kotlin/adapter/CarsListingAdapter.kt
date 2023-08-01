@@ -53,8 +53,6 @@ class CarsListingAdapter(private var mList: List<ApiResponse>, private val conte
                 // Open DetailActivity when the item is clicked
                 val intent = Intent(context, DetailActivity::class.java)
                 intent.putExtra("id", product.id.toString())
-                intent.putExtra("title", product.title)
-                intent.putExtra("location", product.location.toString())
                 context.startActivity(intent)
             }
         }
