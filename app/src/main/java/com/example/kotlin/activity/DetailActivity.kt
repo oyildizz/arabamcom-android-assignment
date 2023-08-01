@@ -20,6 +20,7 @@ import com.example.kotlin.dao.User
 import com.example.kotlin.dao.UsersViewModel
 import com.example.kotlin.databinding.ActivityDetailBinding
 import com.example.kotlin.model.ApiDetailResponse
+import com.example.kotlin.model.UserInfo
 import com.example.kotlin.service.ServiceBuilder
 import com.example.kotlin.viewModel.DetailViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -67,17 +68,27 @@ class DetailActivity : AppCompatActivity() {
             this
         )[UsersViewModel::class.java]
 
-        // LiveData'nı observe etmek için Observer oluşturdum
-        detailDataObserver = Observer { apiDetailResponse ->
-            apiDetailResponse.let {
-                setParameters(apiDetailResponse)
-                setViewPager2Adapter(apiDetailResponse)
-            }
-            Log.d("MainActivity", "carsDetail LiveData updated, new data: $apiDetailResponse")
-        }
-        // LiveData'yı observe ettim
-        detailViewModel.detailData.observe(this, detailDataObserver)
 
+//        // LiveData'nı observe etmek için Observer oluşturdum
+//        detailDataObserver = Observer { apiDetailResponse ->
+//            apiDetailResponse.let {
+//                setParameters(apiDetailResponse)
+//                setViewPager2Adapter(apiDetailResponse)
+//            }
+//            Log.d("MainActivity", "carsDetail LiveData updated, new data: $apiDetailResponse")
+//        }
+        // LiveData'yı observe ettim
+
+
+        detailViewModel.getDetailDataObserve().observe(this){
+            data->
+            data.let {
+                setParameters(data)
+                setViewPager2Adapter(data)
+                userInfoBtnClick(data.userInfo)
+            }
+
+        }
 
 
         // Verileri API'den al ve UI'ı güncellemek için LiveData'yı gözlemledim
@@ -114,54 +125,107 @@ class DetailActivity : AppCompatActivity() {
         }
 
 
-        binding.kullaniciBilgileriButton.setOnClickListener {
-            val cardView = findViewById<CardView>(R.id.cardview)
-            val inflater = LayoutInflater.from(this)
 
-            coroutineScope.launch {
-                // Kullanıcı bilgileri butonuna tıklanıldığında yapılacak işlemler
-                val kullaniciBilgileriView =
-                    inflater.inflate(R.layout.kullanici_bilgileri, null)
-
-                // Kullanıcı bilgilerini Room'dan al
-                val user = userViewModel.getRecordsObserver().value
-                Log.e("geTRECORDS", user.toString())
-                if (user == null) {
-                    // Veriler mevcut değilse API'den çek
-                    userViewModel.fetchUserDataFromAPI(intent.extras!!)
-                    Log.e("USERNAME IN IF USER==NULL", user?.nameSurname.toString())
-
-                } else {
-                    Log.e("USERNAME FROM ROOM", user.nameSurname)
-                    // Veriler mevcutsa TextView'lara verileri ata
-                    val tvId = kullaniciBilgileriView.findViewById<TextView>(R.id.tvId)
-                    val tvUserName =
-                        kullaniciBilgileriView.findViewById<TextView>(R.id.textUserName)
-                    val tvUserPhone =
-                        kullaniciBilgileriView.findViewById<TextView>(R.id.tvUserPhone)
-
-                    tvId.text = user.id.toString()
-                    tvUserName.text = user.nameSurname
-                    tvUserPhone.text = user.phoneFormatted
-                }
-
-                // İlgili XML bileşenlerini ConstraintLayout içine ekleme
-                cardView.removeAllViews()
-                cardView.addView(kullaniciBilgileriView)
-
-            }
-            setUpUserInfo() // Kullanıcı bilgilerini veritabanına kaydet
-
-            updateButtonSelection(binding.kullaniciBilgileriButton.id)
-        }
     }
 
     override fun onDestroy() {
         super.onDestroy()
         // LiveData'nın observe işlemini kaldırdım
-        detailViewModel.detailData.removeObserver(detailDataObserver)
+        //detailViewModel.detailData.removeObserver(detailDataObserver)
     }
 
+private fun userInfoBtnClick(userInfo:UserInfo){
+
+    binding.kullaniciBilgileriButton.setOnClickListener {
+        val cardView = findViewById<CardView>(R.id.cardview)
+        val inflater = LayoutInflater.from(this)
+
+
+        // Kullanıcı bilgileri butonuna tıklanıldığında yapılacak işlemler
+        val kullaniciBilgileriView =
+            inflater.inflate(R.layout.kullanici_bilgileri, null)
+
+        // Kullanıcı bilgilerini Room'dan al
+        val user = userViewModel.getRecordsObserver().value
+        Log.e("geTRECORDS", user.toString())
+        if (user == null) {
+            println("butona tıklandı user== null geldi bu yüzden room a kaydetöme çalışacak")
+            setUserInfoToView(userInfo)
+
+        }
+        else {
+            Log.e("USERNAME FROM ROOM", user.nameSurname)
+            // Veriler mevcutsa TextView'lara verileri ata
+            setUserToView(user)
+        }
+
+        // İlgili XML bileşenlerini ConstraintLayout içine ekleme
+        cardView.removeAllViews()
+        cardView.addView(kullaniciBilgileriView)
+
+        updateButtonSelection(binding.kullaniciBilgileriButton.id)
+    }
+}
+
+    //Room da yoksa user bilgileri room a kaydet ve göster
+    private fun setUserInfoToView(userDetailInfo:UserInfo){
+        try {
+        val cardView = findViewById<CardView>(R.id.cardview)
+        val inflater = LayoutInflater.from(this)
+
+        // Kullanıcı bilgileri butonuna tıklanıldığında yapılacak işlemler
+        val kullaniciBilgileriView =
+            inflater.inflate(R.layout.kullanici_bilgileri, null)
+
+        if (userDetailInfo != null) {
+            val userInfo = User(userDetailInfo.id, userDetailInfo.nameSurname, userDetailInfo.phoneFormatted, userDetailInfo.phone)
+            Log.e(
+                "USERSSSSINFO",
+                userInfo.toString()
+            )
+            userViewModel.addUser(userInfo)
+            // İlgili TextView bileşenlerine metinleri atama
+            val tvPhoneFormatted = kullaniciBilgileriView.findViewById<TextView>(R.id.tvUserPhone)
+            val tvUserName = kullaniciBilgileriView.findViewById<TextView>(R.id.textUserName)
+            val tvId = kullaniciBilgileriView.findViewById<TextView>(R.id.tvId)
+
+            tvId.text = userInfo.id.toString()
+            tvUserName.text = userInfo.nameSurname
+            tvPhoneFormatted.text = userInfo.phoneFormatted
+
+            cardView.removeAllViews()
+            cardView.addView(kullaniciBilgileriView)
+        }
+            else{
+                println("userDetailInfo null geldi")
+            }
+        } catch (e: Exception) {
+            Log.e("CATCH E DUSTU INSERT DEN SONRA",e.toString())
+            // Hata yönetimi yapılabilir
+            e.printStackTrace()
+        }
+        Log.e("USER INFO WITH USERVİEWMODEL FETCHUSERDATA", userDetailInfo.toString())
+
+    }
+
+    private fun setUserToView(userDetailInfo:User){
+        val cardView = findViewById<CardView>(R.id.cardview)
+        val inflater = LayoutInflater.from(this)
+
+        // Kullanıcı bilgileri butonuna tıklanıldığında yapılacak işlemler
+        val kullaniciBilgileriView =
+            inflater.inflate(R.layout.kullanici_bilgileri, null)
+        val tvPhoneFormatted = kullaniciBilgileriView.findViewById<TextView>(R.id.tvUserPhone)
+        val tvUserName = kullaniciBilgileriView.findViewById<TextView>(R.id.textUserName)
+        val tvId = kullaniciBilgileriView.findViewById<TextView>(R.id.tvId)
+
+        tvId.text = userDetailInfo.id.toString()
+        tvUserName.text = userDetailInfo.nameSurname
+        tvPhoneFormatted.text = userDetailInfo.phoneFormatted
+
+        cardView.removeAllViews()
+        cardView.addView(kullaniciBilgileriView)
+    }
 
     private fun setUpUserInfo() {
         userViewModel.getRecordsObserver().observe(this, Observer { user ->

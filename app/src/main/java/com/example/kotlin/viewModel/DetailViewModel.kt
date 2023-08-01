@@ -17,8 +17,12 @@ class DetailViewModel @Inject constructor() : ViewModel() {
     private val _detailData=MutableLiveData<ApiDetailResponse>()
     private val detailDataError= MutableLiveData<Boolean>()
     private val detailDataLoading= MutableLiveData<Boolean>()
-    val detailData: MutableLiveData<ApiDetailResponse> get() = _detailData
+   //val detailData: MutableLiveData<ApiDetailResponse> get() = _detailData
 
+
+    fun getDetailDataObserve():MutableLiveData<ApiDetailResponse>{
+        return  _detailData
+    }
     @SuppressLint("NullSafeMutableLiveData")
     suspend fun getView(id: Int) {
         try {
@@ -35,5 +39,7 @@ class DetailViewModel @Inject constructor() : ViewModel() {
         } finally {
             detailDataLoading.postValue(false)
         }
+
+
     }
 }

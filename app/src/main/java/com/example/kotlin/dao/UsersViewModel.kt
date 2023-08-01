@@ -16,6 +16,7 @@ import javax.inject.Inject
 class UsersViewModel @Inject constructor(private val userDetailRepository: UserDetailRepository) :
     ViewModel() {
 
+
     var userData: MutableLiveData<User> = MutableLiveData()
 
     init {
@@ -44,40 +45,42 @@ class UsersViewModel @Inject constructor(private val userDetailRepository: UserD
         }
     }
 
+//TODO API REPOSITORY
 
-    suspend fun fetchUserDataFromAPI(bundle: Bundle?) {
-        try {
-            val id: Int = bundle?.getString("id")?.toInt() ?: return
-
-            // API isteğini yap
-            val carsDetailApi =
-                ServiceBuilder.buildService().create(ServiceDetailInterface::class.java)
-            val response = withContext(Dispatchers.IO) {
-                carsDetailApi.getView(id).execute()
-            }
-
-            // API'den gelen verileri Room veritabanına kaydet
-            if (response.isSuccessful) {
-                val user = response.body()?.userInfo
-                Log.e("USER INFO WITH USERVİEWMODEL FETCHUSERDATA", user.toString())
-                Log.e(
-                    "nanananaı",
-                    userDetailRepository.getUserInfo.value.toString()
-                )
-                if (user != null) {
-                    val userInfo = User(user.id, user.nameSurname, user.phoneFormatted, user.phone)
-                    Log.e(
-                        "USERSSSSINFO",
-                        userInfo.toString()
-                    )
-                    addUser(userInfo)
-
-                }
-            }
-        } catch (e: Exception) {
-            // Hata yönetimi yapılabilir
-            e.printStackTrace()
-        }
-    }
+    //     fun fetchUserDataFromAPI(bundle: Bundle?) {
+//        try {
+//            val id: Int = bundle?.getString("id")?.toInt() ?: return
+//
+//            // API isteğini yap
+//            val carsDetailApi =
+//                ServiceBuilder.buildService().create(ServiceDetailInterface::class.java)
+//            val response =
+//                carsDetailApi.getView(id).execute()
+//
+//
+//            // API'den gelen verileri Room veritabanına kaydet
+//            if (response.isSuccessful) {
+//                val user = response.body()?.userInfo
+//                Log.e("USER INFO WITH USERVİEWMODEL FETCHUSERDATA", user.toString())
+//                Log.e(
+//                    "nanananaı",
+//                    userDetailRepository.getUserInfo.value.toString()
+//                )
+//                if (user != null) {
+//                    val userInfo = User(user.id, user.nameSurname, user.phoneFormatted, user.phone)
+//                    Log.e(
+//                        "USERSSSSINFO",
+//                        userInfo.toString()
+//                    )
+//                    addUser(userInfo)
+//
+//                }
+//            }
+//        } catch (e: Exception) {
+//            Log.e("CATCH E DUSTU INSERT DEN SONRA",e.toString())
+//            // Hata yönetimi yapılabilir
+//            e.printStackTrace()
+//        }
+//    }
 
 }
