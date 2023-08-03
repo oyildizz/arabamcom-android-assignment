@@ -11,7 +11,6 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.core.view.children
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.widget.ViewPager2
 import com.example.kotlin.R
@@ -179,29 +178,6 @@ class DetailActivity : AppCompatActivity() {
 
     }
 
-    private fun setUpUserInfo() {
-        userViewModel.getRecordsObserver().observe(this, Observer { user ->
-            if (user != null) {
-                // Kullanıcı bilgilerini al ve Room veritabanına kaydet
-                val userInfo = User(user.id, user.nameSurname, user.phoneFormatted, user.phone)
-                userViewModel.addUser(userInfo)
-            }
-        })
-    }
-
-//    private fun setUpUserInfo() {
-//        userViewModel.getRecordsObserver().observe(this, Observer<User> {
-//
-//            if (it != null) {
-//                val user = User(0, it.nameSurname, it.phoneFormatted, it.phone)
-//                userViewModel.addUser(user)
-//            } else {
-//                println("NO DATA")
-//
-//            }
-//        })
-//    }
-
     private fun updateButtonSelection(selectedId: Int) {
         // Seçilen butonun rengini değiştir
         val selectedButton = findViewById<Button>(selectedId)
@@ -238,7 +214,7 @@ class DetailActivity : AppCompatActivity() {
         val userLiveData = detailViewModel.getDetailDataObserve()
         val inflater = LayoutInflater.from(this)
 
-        userLiveData.observe(this, Observer { user ->
+        userLiveData.observe(this) { user ->
             if (user != null) {
                 when (button.id) {
                     R.id.ilan_bilgileri_button -> {
@@ -293,7 +269,7 @@ class DetailActivity : AppCompatActivity() {
                     }
                 }
             }
-        })
+        }
     }
 
     private fun setParameters(responseBody: ApiDetailResponse) {
