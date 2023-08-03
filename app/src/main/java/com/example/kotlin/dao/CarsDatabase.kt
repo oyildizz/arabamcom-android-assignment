@@ -5,7 +5,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
-@Database(entities = [User::class], version = 1, exportSchema = false)
+@Database(entities = [User::class], version = 3, exportSchema = true)
 abstract class CarsDatabase: RoomDatabase() {
 
     //uygulama ayağa kaldırılken çağırılacak
@@ -24,9 +24,9 @@ abstract class CarsDatabase: RoomDatabase() {
                         context.applicationContext,
                         CarsDatabase::class.java,
                         "user_database"
-                    ).build()
-                    //.allowMainThreadQueries().build() yazılabilirdi fakat Bu, Room veritabanı işlemlerinin ana iş parçacığında çalışmasına izin verir ve uygulamanın performansını düşürebilir.
-                // Room işlemlerini arka planda yapmak için Coroutine kullanıyorum zaten, bu nedenle allowMainThreadQueries() kullanmama gerek yok.
+                    ).fallbackToDestructiveMigration().allowMainThreadQueries().build()
+                    //If you don’t want to provide migrations and you specifically want your database to be cleared when you upgrade the version, call fallbackToDestructiveMigration in the database builder.
+                    //geçis saglamaya calıstıgımda try çalıştıktan sonra catch e düsüyordu
                 }
             }
             return dbINSTANCE!!

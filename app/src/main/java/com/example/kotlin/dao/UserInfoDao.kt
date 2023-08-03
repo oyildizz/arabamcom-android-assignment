@@ -13,6 +13,6 @@ interface UserInfoDAO {
     @Insert
     fun addAllUsers(objects: List<User>)
 
-    @Query("SELECT*FROM user ")
-    fun getUserInfo(): LiveData<User>
+    @Query("select * from user where id= :id")
+    fun getUserInfo(id:Int): User
 }

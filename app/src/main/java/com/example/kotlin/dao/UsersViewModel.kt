@@ -19,30 +19,37 @@ class UsersViewModel @Inject constructor(private val userDetailRepository: UserD
 
     var userData: MutableLiveData<User> = MutableLiveData()
 
-    init {
-        loadRecords()
-    }
+//    init {
+//        loadRecords()
+//    }
 
     fun getRecordsObserver(): MutableLiveData<User> {
         return userData
     }
 
+//    fun getUser(id:Int):User?{
+//        val user = userDetailRepository.getUserInfo(id)
+//        return user
+//    }
     fun addUser(usersData: User) {
         userDetailRepository.insert(usersData)
-        loadRecords()
+        loadRecords(usersData.id)
 
     }
 
     fun addAllUser(userList: List<User>) {
         userDetailRepository.addAllUsers(userList)
-        loadRecords()
+//        loadRecords()
     }
 
-    fun loadRecords() {
-        val user = userDetailRepository.getUserInfo
-        if (user.value != null) {
-            userData.postValue(user.value)
-        }
+    fun loadRecords(id:Int) {
+        val user = userDetailRepository.getUserInfo(id)
+            userData.postValue(user)
+
+//        val user = userDetailRepository.getUserInfo(id)
+//        if (user.value != null) {
+//            userData.postValue(user.value)
+//        }
     }
 
 //TODO API REPOSITORY

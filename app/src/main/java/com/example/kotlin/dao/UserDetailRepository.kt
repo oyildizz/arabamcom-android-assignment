@@ -6,7 +6,7 @@ import javax.inject.Inject
 
 class UserDetailRepository @Inject constructor(private val userDao: UserInfoDAO) {
 
-    val getUserInfo: LiveData<User> = userDao.getUserInfo()
+    fun getUserInfo(id:Int) : User = userDao.getUserInfo(id)
 
     fun insert(userData:User){
         userDao.insert(userData)
