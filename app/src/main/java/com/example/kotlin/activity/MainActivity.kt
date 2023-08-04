@@ -18,7 +18,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var carsObserver: Observer<List<ApiResponse>>
 
-    // MainViewModel'in örneğini al
     private val listViewModel by lazy{ ViewModelProvider(this,defaultViewModelProviderFactory)[ListViewModel::class.java] }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,7 +28,6 @@ class MainActivity : AppCompatActivity() {
         binding.recyclerview.layoutManager = LinearLayoutManager(this)
 
 
-
         // LiveData'ı observe ederek veri güncellemelerini otomatik olarak dinleme
         val adapter = CarsListingAdapter(emptyList(), this@MainActivity)
         binding.recyclerview.adapter = adapter
@@ -37,7 +35,6 @@ class MainActivity : AppCompatActivity() {
         carsObserver = Observer<List<ApiResponse>> { cars ->
             // LiveData'ın değiştiği zaman burası çalışır ve UI'ı günceller
             Log.d("MainActivity", "cars LiveData updated, new data: $cars")
-//            adapter.updateData(cars) // Adapter'a yeni verileri atayarak güncelleme yapılır
             if (cars.isNotEmpty()) {
                 // Veriler varsa RecyclerView'i güncelle
                 adapter.updateData(cars)

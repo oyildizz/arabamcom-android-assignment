@@ -27,7 +27,6 @@ object ServiceBuilder {
             .build()
     }
 
-
     @Provides
     @Singleton
     fun getAppDB(context: Application): CarsDatabase {
