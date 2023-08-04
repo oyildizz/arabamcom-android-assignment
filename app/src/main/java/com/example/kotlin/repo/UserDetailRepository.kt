@@ -1,6 +1,7 @@
-package com.example.kotlin.dao
+package com.example.kotlin.repo
 
-import androidx.lifecycle.LiveData
+import com.example.kotlin.dao.User
+import com.example.kotlin.dao.UserInfoDAO
 import javax.inject.Inject
 
 
@@ -8,7 +9,7 @@ class UserDetailRepository @Inject constructor(private val userDao: UserInfoDAO)
 
     fun getUserInfo(id:Int) : User = userDao.getUserInfo(id)
 
-    fun insert(userData:User){
+    fun insert(userData: User){
         userDao.insert(userData)
     }
 

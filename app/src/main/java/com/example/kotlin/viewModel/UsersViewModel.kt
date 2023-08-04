@@ -1,7 +1,9 @@
-package com.example.kotlin.dao
+package com.example.kotlin.viewModel
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.kotlin.dao.User
+import com.example.kotlin.repo.UserDetailRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 

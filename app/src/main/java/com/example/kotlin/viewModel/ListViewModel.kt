@@ -20,7 +20,6 @@ class ListViewModel @Inject constructor(private val carRepository: CarsRepositor
     private val carsLoading = MutableLiveData<Boolean>()
 
     init {
-        // ViewModel oluşturulduğunda verileri hemen al
         getAllProducts()
     }
 

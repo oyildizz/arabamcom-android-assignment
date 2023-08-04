@@ -5,7 +5,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
-@Database(entities = [User::class], version = 3, exportSchema = true)
+@Database(entities = [User::class], version = 3, exportSchema = false)
 abstract class CarsDatabase: RoomDatabase() {
 
     //uygulama ayağa kaldırılken çağırılacak
