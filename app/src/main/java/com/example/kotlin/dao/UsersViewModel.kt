@@ -1,6 +1,5 @@
 package com.example.kotlin.dao
 
-import android.annotation.SuppressLint
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
