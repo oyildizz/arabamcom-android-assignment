@@ -34,7 +34,6 @@ class UsersViewModel @Inject constructor(private val userDetailRepository: UserD
 //        loadRecords()
     }
 
-    @SuppressLint("SuspiciousIndentation")
     fun loadRecords(id:Int) {
         val user = userDetailRepository.getUserInfo(id)
             userData.postValue(user)
