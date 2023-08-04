@@ -55,7 +55,6 @@ class DetailActivity : AppCompatActivity() {
     private var selectedButtonId: Int = 0
     private val selectedTextColor = Color.BLACK
     private val defaultTextColor = Color.WHITE
-//    private var userInfo: User? = null
 
     @SuppressLint("InflateParams")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -82,8 +81,6 @@ class DetailActivity : AppCompatActivity() {
             val id: Int = bundle.getString("id")!!.toInt()
             binding.tvTitle.text = title.toString()
 
-            // Kullanıcı bilgilerini Room'dan al ve userData değişkenini güncelle
-//            setUpUserInfo()
             detailViewModel.getView(id)
             onClick(binding.ilanBilgileriButton)
         }
@@ -127,8 +124,7 @@ class DetailActivity : AppCompatActivity() {
             userViewModel.getRecordsObserver().observe(this) { user ->
                 if (user == null) {
                     setUserInfoToView(userInfo, kullaniciBilgileriView)
-                    //vernin yüklenmesi ve userData nın güncellenmesi için
-//            userViewModel.loadRecords(userInfo.id)
+
                 } else {
                     Log.e("USERNAME FROM ROOM", user.nameSurname)
                     //  Veriler mevcutsa TextView'lara verileri ata
@@ -161,7 +157,6 @@ class DetailActivity : AppCompatActivity() {
         userViewModel.addUser(userInfo)
         setUserToView(userInfo, kullaniciBilgileriView)
 
-
     }
 
     private fun setUserToView(userDetailInfo: User?, kullaniciBilgileriView: View) {
@@ -173,9 +168,6 @@ class DetailActivity : AppCompatActivity() {
         tvId.text = userDetailInfo?.id.toString()
         tvUserName.text = userDetailInfo?.nameSurname
         tvPhoneFormatted.text = userDetailInfo?.phoneFormatted
-
-        println("NULL GLEMEDİ BİLGİLER YAZDIRILMAYA CALISIYOR")
-
     }
 
     private fun updateButtonSelection(selectedId: Int) {
@@ -206,7 +198,6 @@ class DetailActivity : AppCompatActivity() {
             viewPager2.registerOnPageChangeCallback(pageChangeCallback)
         }
     }
-
 
     private fun onClick(button: Button) {
         val cardView = findViewById<CardView>(R.id.cardview)

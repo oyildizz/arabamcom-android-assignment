@@ -11,9 +11,6 @@ abstract class CarsDatabase: RoomDatabase() {
     //uygulama ayağa kaldırılken çağırılacak
     abstract fun getDao(): UserInfoDAO
 
-//    abstract fun locationDao(): LocationDAO
-//    abstract fun categoryDao(): CategoryDAO
-
     companion object {
         private var dbINSTANCE: CarsDatabase? = null
 
