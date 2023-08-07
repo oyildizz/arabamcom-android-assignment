@@ -1,4 +1,4 @@
-package com.example.kotlin.service
+package com.example.kotlin.di
 
 import android.app.Application
 import com.example.kotlin.dao.CarsDatabase

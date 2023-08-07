@@ -135,8 +135,11 @@ class DetailActivity : AppCompatActivity() {
             userDetailInfo.phoneFormatted,
             userDetailInfo.phone
         )
-        userViewModel.addUser(userInfo)
-        setUserToView(userInfo, userInformationView)
+        if(userInfo !=null){
+            userViewModel.addUser(userInfo)
+            setUserToView(userInfo, userInformationView)
+        }
+
     }
 
     private fun setUserToView(userDetailInfo: User?, kullaniciBilgileriView: View) {
