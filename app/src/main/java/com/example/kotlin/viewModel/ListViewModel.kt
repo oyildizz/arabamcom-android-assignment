@@ -19,8 +19,8 @@ class ListViewModel @Inject constructor(private val carRepository: CarsRepositor
 
     fun getAllProducts() {
         Log.d("ListViewModel", "getAllProducts() called")
-        val result = carRepository.getAllProducts().cachedIn(viewModelScope)
-        carList = result
+        val data = carRepository.getAllProducts().cachedIn(viewModelScope)
+        carList = data
         Log.d("ListViewModel", "getAllProducts() completed")
 
     }
