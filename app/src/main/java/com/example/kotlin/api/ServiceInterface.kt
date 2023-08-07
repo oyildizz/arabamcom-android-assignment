@@ -8,9 +8,11 @@ import retrofit2.http.Query
 interface ServiceInterface {
 
     //    @Headers ("Content-Type:application/json")
-    @GET("listing?sort=1&sortDirection=0")
+    @GET("listing")
     suspend fun getAllProducts(
         @Query("take") take: Int,
-        @Query("skip") skip: Int
+        @Query("skip") skip: Int,
+        @Query("sort") sort:Int,
+        @Query("sortDirection") sortDirection:Int,
     ): Response<List<ApiResponse>>
 }

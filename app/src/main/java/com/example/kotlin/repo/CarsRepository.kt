@@ -20,13 +20,13 @@ class CarsRepository @Inject constructor() {
     private val carApi = ServiceBuilder.buildService().create(ServiceInterface::class.java)
     private val carDetailApi = ServiceBuilder.buildService().create(ServiceDetailInterface::class.java)
 
-     fun getAllProducts(): Flow<PagingData<ApiResponse>> {
+     fun getAllProducts(sort:Int,sortDirection:Int): Flow<PagingData<ApiResponse>> {
         return Pager(
             config = PagingConfig(
                 pageSize = TAKE,
                 enablePlaceholders = false // Don't show placeholders for items yet to be loaded
             ),
-            pagingSourceFactory = { CarsPagingSource(carApi) }
+            pagingSourceFactory = { CarsPagingSource(carApi,sort,sortDirection) }
         ).flow
     }
 

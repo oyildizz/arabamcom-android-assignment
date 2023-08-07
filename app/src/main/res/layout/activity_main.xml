@@ -7,16 +7,37 @@
     tools:context=".activity.MainActivity">
 
     <Button
-        android:id="@+id/button"
-        android:layout_width="110dp"
-        android:layout_height="44dp"
-        android:layout_marginStart="14dp"
+        android:id="@+id/buttonFilter"
+        android:layout_width="200dp"
+        android:layout_height="55dp"
         android:layout_marginTop="20dp"
-        android:text="@string/find"
+        android:background="@drawable/button_transparent_background"
+        android:drawableBottom="@drawable/filter"
+        android:text="@string/filter"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/line1"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:src="@drawable/vertical_separator"
+        app:layout_constraintBottom_toTopOf="@+id/recyclerview"
+        app:layout_constraintEnd_toStartOf="@+id/buttonSort"
+        app:layout_constraintStart_toEndOf="@+id/buttonFilter"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/buttonSort"
+        android:layout_width="200dp"
+        android:layout_height="55dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/button_transparent_background"
+        android:drawableBottom="@drawable/sorting"
+        android:text="@string/sort"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/textInputEditText"
         app:layout_constraintTop_toTopOf="parent" />
 
     <!--    <com.google.android.material.textfield.TextInputLayout-->
@@ -27,24 +48,10 @@
     <!--        tools:layout_editor_absoluteY="16dp" />-->
 
 
-    <com.google.android.material.textfield.TextInputEditText
-        android:id="@+id/textInputEditText"
-        android:layout_width="234dp"
-        android:layout_height="43dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="20dp"
-        android:hint="@string/search"
-        android:textAlignment="center"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerview"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="32dp"
         android:padding="10.0dp"
         android:text="TextView"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -52,9 +59,8 @@
 
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button"
-        app:layout_constraintVertical_bias="0.5"
-        />
+        app:layout_constraintTop_toBottomOf="@+id/buttonSort"
+        app:layout_constraintVertical_bias="0.5" />
 
 
     <!--            tools:layout_editor_absoluteX="163dp"-->

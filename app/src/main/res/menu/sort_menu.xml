@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/price_sort_ascending"
+        android:title="Fiyat- Ucuzdan Pahalıya"/>
+    <item
+        android:id="@+id/price_sort_descending"
+        android:title="Fiyat-Pahalıdan Ucuza "/>
+    <item
+        android:id="@+id/year_sort_descending"
+        android:title="Yıl-Yeniden Eskiye"/>
+    <item
+        android:id="@+id/year_sort_ascending"
+        android:title="Yıl-Eskiden Yeniye"/>
+    <item
+        android:id="@+id/date_sort_descending"
+        android:title="Tarih-Yeniden Eskiye"/>
+    <item
+        android:id="@+id/date_sort_ascending"
+        android:title="Tarih-Eskiden Yeniye"/>
+
+</menu>
