@@ -10,7 +10,6 @@ import com.example.kotlin.di.ServiceBuilder
 import com.example.kotlin.model.ApiDetailResponse
 import com.example.kotlin.model.ApiResponse
 import com.example.kotlin.paging.CarsPagingSource
-import com.example.kotlin.util.Util.TAKE
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
@@ -20,10 +19,10 @@ class CarsRepository @Inject constructor() {
     private val carApi = ServiceBuilder.buildService().create(ServiceInterface::class.java)
     private val carDetailApi = ServiceBuilder.buildService().create(ServiceDetailInterface::class.java)
 
-     fun getAllProducts(): Flow<PagingData<ApiResponse>> {
+     fun getAllProducts(take:Int,skip:Int): Flow<PagingData<ApiResponse>> {
         return Pager(
             config = PagingConfig(
-                pageSize = TAKE,
+                pageSize = take,
                 enablePlaceholders = false // Don't show placeholders for items yet to be loaded
             ),
             pagingSourceFactory = { CarsPagingSource(carApi) }
