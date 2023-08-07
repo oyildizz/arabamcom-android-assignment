@@ -1,3 +1,4 @@
+
 package com.example.kotlin.adapter
 
 import android.content.Context
@@ -7,14 +8,16 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.paging.PagingDataAdapter
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.kotlin.model.ApiResponse
 import com.example.kotlin.activity.DetailActivity
 import com.example.kotlin.R
 import com.squareup.picasso.Picasso
 
-class CarsListingAdapter(private var mList: List<ApiResponse>, private val context: Context) :
-    RecyclerView.Adapter<CarsListingAdapter.ViewHolder>() {
+class CarsListingAdapter(private val context: Context) :
+    PagingDataAdapter<ApiResponse, CarsListingAdapter.ViewHolder>(CarsDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.product_card, parent, false)
@@ -22,17 +25,9 @@ class CarsListingAdapter(private var mList: List<ApiResponse>, private val conte
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val product = mList[position]
-        holder.bind(product)
-    }
-
-    override fun getItemCount(): Int {
-        return mList.size
-    }
-
-    fun updateData(newList: List<ApiResponse>) {
-        mList = newList
-        notifyDataSetChanged()
+        getItem(position)?.let { product ->
+            holder.bind(product)
+        }
     }
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -56,5 +51,15 @@ class CarsListingAdapter(private var mList: List<ApiResponse>, private val conte
                 context.startActivity(intent)
             }
         }
+    }
+}
+
+class CarsDiffCallback : DiffUtil.ItemCallback<ApiResponse>() {
+    override fun areItemsTheSame(oldItem: ApiResponse, newItem: ApiResponse): Boolean {
+        return oldItem.id == newItem.id
+    }
+
+    override fun areContentsTheSame(oldItem: ApiResponse, newItem: ApiResponse): Boolean {
+        return oldItem == newItem
     }
 }

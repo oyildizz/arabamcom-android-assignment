@@ -5,11 +5,15 @@ import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.kotlin.adapter.CarsListingAdapter
 import com.example.kotlin.databinding.ActivityMainBinding
 import com.example.kotlin.viewModel.ListViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -24,17 +28,37 @@ class MainActivity : AppCompatActivity() {
 
         binding.recyclerview.layoutManager = LinearLayoutManager(this)
 
-        // LiveData'ı observe ederek veri güncellemelerini otomatik olarak dinleme
-        val adapter = CarsListingAdapter(emptyList(), this@MainActivity)
+        val adapter = CarsListingAdapter(this@MainActivity)
         binding.recyclerview.adapter = adapter
 
-        listViewModel.getRecordObserver().observe(this) { cars ->
-            Log.d("MainActivity", "cars LiveData updated, new data: $cars")
-            if (cars.isNotEmpty()) {
-                // Veriler varsa RecyclerView'i güncelle
-                adapter.updateData(cars)
-            } else {
-                showErrorMessage("Veri bulunamadı veya bir hata oluştu.")
+        // Collect latest paging data from the ViewModel
+        lifecycleScope.launch {
+            listViewModel.getAllProducts()
+            listViewModel.carList?.collectLatest { pagingData ->
+                adapter.submitData(pagingData)
+            }
+        }
+
+        // Handle loading and error states
+        adapter.addLoadStateListener { loadState ->
+            // Handle loading states here
+            when (loadState.refresh) {
+                is LoadState.Loading -> {
+                    Log.d("LoadState", "Loading state: Loading...")
+                }
+
+                is LoadState.Error -> {
+                    Log.d("LoadState", "Error state: Error loading data.")
+                }
+
+                else -> {
+                    Log.d("LoadState", "Loading state: Not loading")
+                }
+            }
+
+            // Handle end of pagination (end of data)
+            if (loadState.append.endOfPaginationReached) {
+                Log.d("LoadState", "End of pagination: All pages have been loaded.")
             }
         }
     }
