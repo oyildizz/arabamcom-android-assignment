@@ -8,14 +8,14 @@ import com.example.kotlin.util.Util.TAKE
 import retrofit2.HttpException
 
 
-class CarsPagingSource(private val serviceInterface: ServiceInterface, private val sort:Int,private val sortDirection:Int): PagingSource<Int,ApiResponse >(){
+class CarsPagingSource(private val serviceInterface: ServiceInterface, private val sort:Int,private val sortDirection:Int,private val minYear:Int,private val maxYear:Int): PagingSource<Int,ApiResponse >(){
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, ApiResponse> {
         val skip = params.key?:0
         val take= TAKE
 
       return try {
-           val response= serviceInterface.getAllProducts(take,skip,sort,sortDirection).body()
+           val response= serviceInterface.getAllProducts(take,skip,sort,sortDirection,minYear, maxYear).body()
 
            return LoadResult.Page(
                data = response!!,

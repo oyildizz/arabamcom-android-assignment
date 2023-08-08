@@ -12,7 +12,9 @@ interface ServiceInterface {
     suspend fun getAllProducts(
         @Query("take") take: Int,
         @Query("skip") skip: Int,
-        @Query("sort") sort:Int,
-        @Query("sortDirection") sortDirection:Int,
+        @Query("sort") sort: Int,
+        @Query("sortDirection") sortDirection: Int,
+        @Query("minYear") minYear: Int,
+        @Query("maxYear") maxYear: Int
     ): Response<List<ApiResponse>>
 }

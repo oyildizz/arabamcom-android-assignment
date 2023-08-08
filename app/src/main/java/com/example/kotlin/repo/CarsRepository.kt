@@ -20,31 +20,15 @@ class CarsRepository @Inject constructor() {
     private val carApi = ServiceBuilder.buildService().create(ServiceInterface::class.java)
     private val carDetailApi = ServiceBuilder.buildService().create(ServiceDetailInterface::class.java)
 
-     fun getAllProducts(sort:Int,sortDirection:Int): Flow<PagingData<ApiResponse>> {
+     fun getAllProducts(sort:Int,sortDirection:Int,minYear:Int,maxYear:Int): Flow<PagingData<ApiResponse>> {
         return Pager(
             config = PagingConfig(
                 pageSize = TAKE,
                 enablePlaceholders = false // Don't show placeholders for items yet to be loaded
             ),
-            pagingSourceFactory = { CarsPagingSource(carApi,sort,sortDirection) }
+            pagingSourceFactory = { CarsPagingSource(carApi,sort,sortDirection,minYear, maxYear) }
         ).flow
     }
-
-//    suspend fun getAllProducts(): List<ApiResponse> {
-//        return withContext(Dispatchers.IO) {
-//            try {
-//                val response = carApi.getAllProducts().execute()
-//                if (response.isSuccessful) {
-//                    response.body() ?: emptyList()
-//                } else {
-//                    throw Exception("Error fetching products: ${response.message()}")
-//                }
-//            } catch (e: Exception) {
-//                throw Exception("Error fetching products: ${e.message}")
-//            }
-//        }
-//    }
-
     suspend fun getProductDetail(id: Int): ApiDetailResponse {
         return withContext(Dispatchers.IO) {
             try {

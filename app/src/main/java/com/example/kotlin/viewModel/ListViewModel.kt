@@ -7,6 +7,8 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.example.kotlin.model.ApiResponse
 import com.example.kotlin.repo.CarsRepository
+import com.example.kotlin.util.Util.MAX_YEAR
+import com.example.kotlin.util.Util.MIN_YEAR
 import com.example.kotlin.util.Util.SORT
 import com.example.kotlin.util.Util.SORT_DIRECTION
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -20,9 +22,11 @@ class ListViewModel @Inject constructor(private val carRepository: CarsRepositor
 
     var sort=SORT
     var sortDirection=SORT_DIRECTION
+    var minYear=MIN_YEAR
+    var maxYear= MAX_YEAR
     fun getAllProducts() {
         Log.d("ListViewModel", "getAllProducts() called")
-        val data = carRepository.getAllProducts(sort,sortDirection).cachedIn(viewModelScope)
+        val data = carRepository.getAllProducts(sort,sortDirection,minYear, maxYear).cachedIn(viewModelScope)
         carList = data
         Log.d("ListViewModel", "getAllProducts() completed")
 
