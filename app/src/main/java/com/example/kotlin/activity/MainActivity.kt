@@ -144,7 +144,7 @@ class MainActivity : AppCompatActivity() {
             val inputMinYear = editTextMinYear.text.toString().toIntOrNull()
             val inputMaxYear = editTextMaxYear.text.toString().toIntOrNull()
 
-            if (inputMinYear != null && inputMaxYear != null) {
+            if (inputMinYear != null || inputMaxYear != null) {
                 if (inputMinYear != null) {
                     listViewModel.minYear = inputMinYear
                 }
